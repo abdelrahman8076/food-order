@@ -57,19 +57,21 @@ class Coupon extends Model
     public function validationMessage(float $subtotal): ?string
     {
         if (!$this->is_active) {
-            return 'This coupon is no longer active.';
+            return __('orders.coupon_inactive');
         }
 
         if ($this->expires_at && $this->expires_at->isPast()) {
-            return 'This coupon has expired.';
+            return __('orders.coupon_expired');
         }
 
         if ($this->max_uses !== null && $this->used_count >= $this->max_uses) {
-            return 'This coupon has reached its usage limit.';
+            return __('orders.coupon_limit_reached');
         }
 
         if ($this->min_order_amount !== null && $subtotal < (float) $this->min_order_amount) {
-            return 'Minimum order amount of $' . number_format((float) $this->min_order_amount, 2) . ' required.';
+            return __('orders.coupon_min_order', [
+                'amount' => number_format((float) $this->min_order_amount, 2),
+            ]);
         }
 
         return null;

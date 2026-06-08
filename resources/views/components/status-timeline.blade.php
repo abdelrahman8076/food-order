@@ -16,7 +16,7 @@
                 @endif
             </div>
             <div class="timeline-content">
-                <div class="timeline-label">{{ $step['label'] }}</div>
+                <div class="timeline-label">{{ __('orders.statuses.' . $step['key']) }}</div>
                 @if($step['timestamp'])
                     <div class="timeline-time">{{ $step['timestamp']->format('M d, g:i A') }}</div>
                 @endif

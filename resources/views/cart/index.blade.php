@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Cart')
+@section('title', __('cart.title'))
 @section('content')
 <div class="container">
-    <h1 class="page-heading mb-4">Your <span>Cart</span></h1>
+    <h1 class="page-heading mb-4">{{ __('cart.heading') }} <span>{{ __('cart.heading_accent') }}</span></h1>
 
     @if(empty($items))
         <x-glass-card>
-            <p class="text-white-50 mb-3">Your cart is empty.</p>
-            <a href="{{ route('menu.index') }}" class="btn btn-primary-orange">Browse Menu</a>
+            <p class="text-white-50 mb-3">{{ __('cart.empty') }}</p>
+            <a href="{{ route('menu.index') }}" class="btn btn-primary-orange">{{ __('cart.browse_menu') }}</a>
         </x-glass-card>
     @else
     <div class="row g-4">
@@ -19,8 +19,8 @@
                         <div class="cart-item-row d-flex justify-content-between align-items-start gap-2">
                             <div class="flex-grow-1 min-w-0">
                                 <span class="text-white fw-bold">{{ $row->name }}</span>
-                                <span class="text-white-50 small ms-1">${{ number_format($row->price, 2) }} each</span>
-                                <div class="text-white-50 small mt-1">Qty: {{ $row->quantity }}</div>
+                                <span class="text-white-50 small ms-1">${{ number_format($row->price, 2) }} {{ __('cart.price_each') }}</span>
+                                <div class="text-white-50 small mt-1">{{ __('cart.qty_label') }} {{ $row->quantity }}</div>
                                 @if(!empty($row->notes))
                                     <div class="small text-white-50 mt-1"><i class="bi bi-chat-left-text me-1"></i>{{ $row->notes }}</div>
                                 @endif
@@ -40,24 +40,24 @@
                                 <input type="hidden" name="item_id" value="{{ $row->id }}">
                                 <input type="hidden" name="quantity" class="cart-qty-input" value="{{ $row->quantity }}">
 
-                                <label class="form-label text-white-50 small mb-2">Quantity</label>
+                                <label class="form-label text-white-50 small mb-2">{{ __('cart.quantity') }}</label>
                                 <div class="cart-qty-control mb-3">
                                     <button type="button" class="cart-qty-btn cart-qty-minus">−</button>
                                     <span class="cart-qty-value">{{ $row->quantity }}</span>
                                     <button type="button" class="cart-qty-btn cart-qty-plus">+</button>
                                 </div>
 
-                                <label class="form-label text-white-50 small mb-2">Special request (optional)</label>
+                                <label class="form-label text-white-50 small mb-2">{{ __('cart.special_request') }}</label>
                                 <input type="text" name="notes" class="form-control glass-input cart-notes-input mb-1"
-                                       maxlength="50" placeholder="No onions, extra sauce..."
+                                       maxlength="50" placeholder="{{ __('cart.notes_placeholder') }}"
                                        value="{{ $row->notes ?? '' }}">
                                 <div class="d-flex justify-content-end mb-3">
-                                    <small class="text-white-50 cart-notes-count">0/50</small>
+                                    <small class="text-white-50 cart-notes-count">{{ __('cart.notes_counter', ['count' => 0]) }}</small>
                                 </div>
 
                                 <div class="d-flex gap-2">
-                                    <button type="submit" class="btn btn-primary-orange flex-grow-1">Save changes</button>
-                                    <button type="button" class="btn btn-outline-glass cart-cancel-btn">Cancel</button>
+                                    <button type="submit" class="btn btn-primary-orange flex-grow-1">{{ __('cart.save_changes') }}</button>
+                                    <button type="button" class="btn btn-outline-glass cart-cancel-btn">{{ __('common.cancel') }}</button>
                                 </div>
                             </form>
                         </div>
@@ -66,33 +66,33 @@
             </x-glass-card>
         </div>
         <div class="col-lg-4">
-            <x-glass-card title="Summary">
+            <x-glass-card :title="__('cart.summary')">
                 <div class="d-flex justify-content-between mb-2">
-                    <span class="text-white-50">Subtotal</span>
+                    <span class="text-white-50">{{ __('common.subtotal') }}</span>
                     <strong class="text-white">${{ number_format($subtotal, 2) }}</strong>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
-                    <span class="text-white-50">Tax</span>
+                    <span class="text-white-50">{{ __('common.tax') }}</span>
                     <span class="text-white">${{ number_format($tax, 2) }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1">
-                    <span class="text-white-50">Delivery</span>
+                    <span class="text-white-50">{{ __('common.delivery') }}</span>
                     <span class="text-white">${{ number_format($deliveryFee, 2) }}</span>
                 </div>
                 @if($deliveryFee > 0)
                     <p class="small text-white-50 mb-2">
-                        Delivery fee depends on your area for orders under ${{ number_format($settings->free_delivery_min, 2) }}.
+                        {{ __('cart.delivery_fee_note', ['amount' => number_format($settings->free_delivery_min, 2)]) }}
                     </p>
                 @else
-                    <p class="small text-white-50 mb-2">Free delivery — your order qualifies.</p>
+                    <p class="small text-white-50 mb-2">{{ __('cart.free_delivery') }}</p>
                 @endif
                 <hr style="border-color: var(--glass-border);">
                 <div class="d-flex justify-content-between mb-3">
-                    <span class="text-white fw-bold">Total</span>
+                    <span class="text-white fw-bold">{{ __('common.total') }}</span>
                     <strong class="price-tag fs-5">${{ number_format($total, 2) }}</strong>
                 </div>
-                <a href="{{ route('checkout.index') }}" class="btn btn-primary-orange w-100">Proceed to Checkout</a>
-                <a href="{{ route('menu.index') }}" class="btn btn-outline-glass w-100 mt-2">Continue Shopping</a>
+                <a href="{{ route('checkout.index') }}" class="btn btn-primary-orange w-100">{{ __('cart.checkout') }}</a>
+                <a href="{{ route('menu.index') }}" class="btn btn-outline-glass w-100 mt-2">{{ __('cart.continue_shopping') }}</a>
             </x-glass-card>
         </div>
     </div>
@@ -104,10 +104,11 @@
 <script>
 (function() {
     const min = 1, max = 20;
+    const notesCounterTemplate = @json(__('cart.notes_counter', ['count' => ':count']));
 
     function updateNotesCount(input) {
         const counter = input.closest('.cart-item-edit').querySelector('.cart-notes-count');
-        if (counter) counter.textContent = input.value.length + '/50';
+        if (counter) counter.textContent = notesCounterTemplate.replace(':count', input.value.length);
     }
 
     document.querySelectorAll('.cart-notes-input').forEach(function(input) {

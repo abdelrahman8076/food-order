@@ -9,7 +9,7 @@
         <hr style="border-color: var(--glass-border);">
         <div class="row">
             <div class="col-12">
-                <h6 class="text-white">Items</h6>
+                <h6 class="text-white">{{ __('common.items') }}</h6>
                 <ul class="list-unstyled text-white-50 small">
                     @foreach($order->orderItems as $oi)
                         <li class="mb-1">
@@ -21,17 +21,17 @@
                     @endforeach
                 </ul>
                 <div class="text-white-50 small">
-                    <div class="d-flex justify-content-between"><span>Subtotal</span><span>${{ number_format($order->subtotal, 2) }}</span></div>
+                    <div class="d-flex justify-content-between"><span>{{ __('common.subtotal') }}</span><span>${{ number_format($order->subtotal, 2) }}</span></div>
                     @if($order->discount > 0)
                         <div class="d-flex justify-content-between text-success">
-                            <span>Discount</span>
+                            <span>{{ __('common.discount') }}</span>
                             <span>-${{ number_format($order->discount, 2) }}</span>
                         </div>
                     @endif
-                    <div class="d-flex justify-content-between"><span>Tax</span><span>${{ number_format($order->tax, 2) }}</span></div>
-                    <div class="d-flex justify-content-between"><span>Delivery</span><span>${{ number_format($order->delivery_fee, 2) }}</span></div>
+                    <div class="d-flex justify-content-between"><span>{{ __('common.tax') }}</span><span>${{ number_format($order->tax, 2) }}</span></div>
+                    <div class="d-flex justify-content-between"><span>{{ __('common.delivery') }}</span><span>${{ number_format($order->delivery_fee, 2) }}</span></div>
                 </div>
-                <p class="text-white fw-bold mb-0 mt-2">Total: ${{ number_format($order->total, 2) }}</p>
+                <p class="text-white fw-bold mb-0 mt-2">{{ __('common.total') }}: ${{ number_format($order->total, 2) }}</p>
             </div>
         </div>
     </div>
@@ -44,10 +44,10 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h5 class="text-white mb-1">{{ $order->order_number }}</h5>
-                <span class="text-white-50 small">{{ $order->created_at->format('M d, Y g:i A') }}</span>
+                <span class="text-white-50 small">{{ $order->created_at->locale(app()->getLocale())->translatedFormat('M d, Y g:i A') }}</span>
             </div>
             <span class="badge rounded-pill px-3 py-2" id="statusBadge"
-                  style="background: var(--primary-orange);">{{ \App\Services\OrderService::STATUSES[$order->status] ?? ucfirst($order->status) }}</span>
+                  style="background: var(--primary-orange);">{{ __('orders.statuses.' . $order->status) }}</span>
         </div>
 
         <x-status-timeline :order="$order" />
@@ -55,7 +55,7 @@
         <hr style="border-color: var(--glass-border);">
         <div class="row">
             <div class="col-12">
-                <h6 class="text-white">Items</h6>
+                <h6 class="text-white">{{ __('common.items') }}</h6>
                 <ul class="list-unstyled text-white-50 small">
                     @foreach($order->orderItems as $oi)
                         <li class="mb-1">
@@ -67,17 +67,17 @@
                     @endforeach
                 </ul>
                 <div class="text-white-50 small">
-                    <div class="d-flex justify-content-between"><span>Subtotal</span><span>${{ number_format($order->subtotal, 2) }}</span></div>
+                    <div class="d-flex justify-content-between"><span>{{ __('common.subtotal') }}</span><span>${{ number_format($order->subtotal, 2) }}</span></div>
                     @if($order->discount > 0)
                         <div class="d-flex justify-content-between text-success">
-                            <span>Discount</span>
+                            <span>{{ __('common.discount') }}</span>
                             <span>-${{ number_format($order->discount, 2) }}</span>
                         </div>
                     @endif
-                    <div class="d-flex justify-content-between"><span>Tax</span><span>${{ number_format($order->tax, 2) }}</span></div>
-                    <div class="d-flex justify-content-between"><span>Delivery</span><span>${{ number_format($order->delivery_fee, 2) }}</span></div>
+                    <div class="d-flex justify-content-between"><span>{{ __('common.tax') }}</span><span>${{ number_format($order->tax, 2) }}</span></div>
+                    <div class="d-flex justify-content-between"><span>{{ __('common.delivery') }}</span><span>${{ number_format($order->delivery_fee, 2) }}</span></div>
                 </div>
-                <p class="text-white fw-bold mb-0 mt-2">Total: ${{ number_format($order->total, 2) }}</p>
+                <p class="text-white fw-bold mb-0 mt-2">{{ __('common.total') }}: ${{ number_format($order->total, 2) }}</p>
             </div>
         </div>
     </x-glass-card>

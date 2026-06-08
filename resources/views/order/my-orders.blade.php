@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'My Orders')
+@section('title', __('orders.my_orders_title'))
 
 @section('content')
 <div class="container py-4 py-md-5">
     
     <!-- Page Header Context -->
     <div class="mb-4">
-        <span class="text-uppercase tracking-widest small text-warning fw-bold mb-1 d-block">Purchase History</span>
-        <h1 class="display-5 fw-black text-white m-0">My <span class="italic-serif text-accent-yellow">Orders</span></h1>
-        <p class="text-white-50 small mt-1 mb-0">Review past delicious journeys or track your fresh requests arriving live.</p>
+        <span class="text-uppercase tracking-widest small text-warning fw-bold mb-1 d-block">{{ __('orders.purchase_history') }}</span>
+        <h1 class="display-5 fw-black text-white m-0">{{ __('orders.my_orders_title') }}</h1>
+        <p class="text-white-50 small mt-1 mb-0">{{ __('orders.my_orders_subtext') }}</p>
     </div>
 
     @forelse($orders as $order)
@@ -21,7 +21,7 @@
                 'processing', 'preparing', 'confirmed', 'ready', 'out_for_delivery' => 'info',
                 default => 'primary',
             };
-            $statusLabel = \App\Services\OrderService::STATUSES[$order->status] ?? ucfirst($order->status);
+            $statusLabel = __('orders.statuses.' . $order->status);
         @endphp
 
         <x-glass-card class="mb-3 order-history-card position-relative overflow-hidden">
@@ -35,7 +35,7 @@
                         </div>
                         <div>
                             <h6 class="text-white fw-bold tracking-tight mb-1 fs-5 order-number-txt">{{ $order->order_number }}</h6>
-                            <span class="text-white-50 small d-block"><i class="bi bi-clock me-1 small"></i>{{ $order->created_at->format('M d, Y · g:i A') }}</span>
+                            <span class="text-white-50 small d-block"><i class="bi bi-clock me-1 small"></i>{{ $order->created_at->locale(app()->getLocale())->translatedFormat('M d, Y · g:i A') }}</span>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                     
                     <a href="{{ route('order.track') }}?order_number={{ $order->order_number }}" 
                        class="btn btn-sm btn-action-track px-3 py-1.5 rounded-pill w-100-mobile transition-all">
-                        <i class="bi bi-geo-alt me-1"></i>Track Order
+                        <i class="bi bi-geo-alt me-1"></i>{{ __('orders.track_button') }}
                     </a>
                 </div>
 
@@ -70,12 +70,12 @@
         <!-- Styled Empty State Block -->
         <x-glass-card class="text-center py-5 border border-dashed border-secondary border-opacity-25 rounded-4">
             <div class="mb-3 text-muted display-5"><i class="bi bi-bag-x"></i></div>
-            <h5 class="text-white fw-bold mb-2">No Orders Registered</h5>
+            <h5 class="text-white fw-bold mb-2">{{ __('orders.no_orders_title') }}</h5>
             <p class="text-white-50 m-0 max-w-sm mx-auto fs-6 mb-4">
-                Looks like you haven't placed any delicious requests within your history yet. Let's fix that!
+                {{ __('orders.no_orders_body') }}
             </p>
             <a href="{{ route('menu.index') }}" class="btn btn-primary-orange px-4 py-2 fw-bold text-uppercase tracking-wider rounded-pill shadow-sm">
-                <i class="bi bi-search me-2 small"></i>Browse Our Kitchen Menu
+                <i class="bi bi-search me-2 small"></i>{{ __('orders.browse_menu') }}
             </a>
         </x-glass-card>
     @endforelse

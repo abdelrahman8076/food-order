@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Menu',
+    'badge' => '✨ Freshly Prepared',
+    'heading_our' => 'Our',
+    'heading_menu' => 'Menu',
+    'subtext' => 'Browse our premium selection of homemade dishes cooked right to order.',
+    'filter_all' => 'All Content',
+    'choices' => ':count Choices',
+    'breadcrumb' => 'Menu',
+    'empty_category' => 'No items in this category right now.',
+    'view_full' => 'View full menu',
+    'sold_out' => 'SOLD OUT',
+    'sold_out_overlay' => 'Sold Out',
+    'select_quantity' => 'Select Quantity:',
+    'qty_decrease' => 'Decrease quantity',
+    'qty_increase' => 'Increase quantity',
+    'special_instructions' => 'Special Instructions',
+    'notes_placeholder' => 'E.g., No onions, dressings on the side...',
+    'notes_counter' => ':count / 50 characters',
+    'fallback_description' => 'Homemade with love, prepared fresh for you.',
+    'fallback_description_short' => 'Homemade with love.',
+    'add_to_cart' => 'Add To Order Container',
+    'out_of_stock' => 'Out of Stock Today',
+    'back' => '← Back to Culinary Menu',
+    'related_title' => 'Complementary Additions',
+];

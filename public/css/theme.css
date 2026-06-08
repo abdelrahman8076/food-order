@@ -19,6 +19,8 @@
     --glass: rgba(255, 255, 255, 0.07);
     --glass-border: rgba(255, 255, 255, 0.12);
     --bg-overlay: rgba(10, 10, 10, 0.88);
+    --public-navbar-height: 64px;
+    --menu-filter-height: 56px;
 }
 
 /* --- Shared utilities --- */
@@ -569,7 +571,11 @@ body.layout-public {
     overflow-x: hidden;
 }
 
-.navbar {
+body.layout-public #mainNav {
+            z-index: 1030;
+        }
+
+        .navbar {
             padding: 1rem 0;
             transition: 0.3s;
             background: rgba(10, 10, 10, 0.5);
@@ -1067,11 +1073,20 @@ body.layout-public {
 }
 
 /* Enhanced Sticky Glass Filter Bar Configuration */
+.menu-filter-sticky.sticky-top,
 .menu-filter-sticky {
+    top: var(--public-navbar-height);
     z-index: 1020;
-    margin-top: 1rem;
-    border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 0;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.menu-filter-sticky.backdrop-blur,
+.backdrop-blur.menu-filter-sticky {
+    background: rgba(10, 10, 10, 0.92);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 }
 .backdrop-blur {
     background: rgba(15, 15, 15, 0.75);
@@ -1114,9 +1129,9 @@ body.layout-public {
     scrollbar-width: none;
 }
 
-/* Graceful anchor scroll adjustment to avoid running underneath the sticky top navbar */
+/* Graceful anchor scroll adjustment to avoid running underneath sticky navbar + filter */
 .scroll-margin-target {
-    scroll-margin-top: 90px;
+    scroll-margin-top: calc(var(--public-navbar-height) + var(--menu-filter-height) + 16px);
 }
 
 /* Smooth Interactive Micro-animations */
@@ -1684,3 +1699,74 @@ body.layout-public {
     .new-order-toast .btn-close {
         filter: invert(1);
     }
+
+/* --- RTL layout --- */
+[dir="rtl"] body.layout-public,
+[dir="rtl"] body.layout-admin {
+    font-family: 'Cairo', sans-serif;
+    letter-spacing: 0;
+}
+
+.locale-switcher .locale-switcher-btn {
+    min-width: 2.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+body.layout-public .locale-switcher .locale-switcher-btn:not(.btn-admin-primary) {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+}
+
+body.layout-public .locale-switcher .locale-switcher-btn.btn-admin-primary {
+    background: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: #111;
+}
+
+[dir="rtl"] .breadcrumb-item + .breadcrumb-item::before {
+    float: right;
+    padding-left: 0.5rem;
+    padding-right: 0;
+}
+
+[dir="rtl"] .menu-filter-scroll {
+    mask-image: linear-gradient(to left, transparent, black 24px, black calc(100% - 24px), transparent);
+    -webkit-mask-image: linear-gradient(to left, transparent, black 24px, black calc(100% - 24px), transparent);
+}
+
+[dir="ltr"] .menu-filter-scroll {
+    mask-image: linear-gradient(to right, transparent, black 24px, black calc(100% - 24px), transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 24px, black calc(100% - 24px), transparent);
+}
+
+[dir="rtl"] body.layout-admin .table th.text-end,
+[dir="rtl"] body.layout-admin .table td.text-end {
+    text-align: left !important;
+}
+
+[dir="rtl"] body.layout-admin .btn-group,
+[dir="rtl"] body.layout-admin .d-flex.gap-1,
+[dir="rtl"] body.layout-admin .d-flex.gap-2 {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .navbar .me-auto {
+    margin-right: 0 !important;
+    margin-left: auto !important;
+}
+
+[dir="rtl"] .navbar .ms-lg-3 {
+    margin-left: 0 !important;
+    margin-right: 1rem !important;
+}
+
+[dir="rtl"] .input-group > :not(:first-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+[dir="rtl"] .bi-arrow-left::before {
+    content: "\f138";
+}

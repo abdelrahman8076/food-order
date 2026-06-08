@@ -13,7 +13,10 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\DeliveryLocationController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 
 // Public
 Route::get('/', [HomeController::class, 'index'])->name('home');

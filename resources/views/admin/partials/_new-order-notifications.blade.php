@@ -1,9 +1,9 @@
 <div id="notifyPermissionBanner" class="alert alert-warning alert-dismissible fade show mb-0 rounded-0 d-none" role="alert" style="border-bottom: 1px solid var(--admin-border);">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-        <span><i class="bi bi-bell me-1"></i> Enable desktop alerts to get new order notifications when this tab is in the background.</span>
-        <button type="button" class="btn btn-sm btn-admin-primary" id="notifyPermissionEnable">Enable</button>
+        <span><i class="bi bi-bell me-1"></i> {{ __('admin.nav.notify_banner') }}</span>
+        <button type="button" class="btn btn-sm btn-admin-primary" id="notifyPermissionEnable">{{ __('admin.nav.notify_enable') }}</button>
     </div>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('common.close') }}"></button>
 </div>
 
 <div class="toast-container position-fixed top-0 end-0 p-3" id="newOrderToastContainer" style="z-index: 1080;"></div>
@@ -14,6 +14,11 @@
     const soundUrl = @json(asset('sounds/new-order.wav'));
     const storageKey = 'adminLastSeenOrderId';
     const pollIntervalMs = 10000;
+    const i18n = {
+        newOrder: @json(__('admin.nav.notify_new_order')),
+        justNow: @json(__('admin.nav.notify_just_now')),
+        view: @json(__('admin.nav.notify_view')),
+    };
 
     const badge = document.getElementById('pendingOrdersBadge');
     const toastContainer = document.getElementById('newOrderToastContainer');
@@ -132,7 +137,7 @@
     function showDesktopNotification(order) {
         if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
-        const notification = new Notification('New Order — ' + order.order_number, {
+        const notification = new Notification(i18n.newOrder + ' — ' + order.order_number, {
             body: order.customer_name + ' — $' + order.total,
             tag: 'order-' + order.id,
             silent: false,
@@ -163,8 +168,8 @@
         toastEl.innerHTML =
             '<div class="toast-header">' +
                 '<i class="bi bi-bell-fill me-2" style="color: var(--admin-orange);"></i>' +
-                '<strong class="me-auto">New Order</strong>' +
-                '<small>just now</small>' +
+                '<strong class="me-auto">' + i18n.newOrder + '</strong>' +
+                '<small>' + i18n.justNow + '</small>' +
                 '<button type="button" class="btn-close" data-bs-dismiss="toast"></button>' +
             '</div>' +
             '<div class="toast-body">' +
@@ -172,7 +177,7 @@
                 '<div class="small text-white-50">' + order.customer_name + '</div>' +
                 '<div class="mt-2 d-flex justify-content-between align-items-center">' +
                     '<span class="fw-bold">$' + order.total + '</span>' +
-                    '<a href="' + order.url + '" class="btn btn-sm btn-admin-primary">View</a>' +
+                    '<a href="' + order.url + '" class="btn btn-sm btn-admin-primary">' + i18n.view + '</a>' +
                 '</div>' +
             '</div>';
 

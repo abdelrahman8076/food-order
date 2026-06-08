@@ -24,7 +24,9 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'name_ar' => 'nullable|string|max:255',
             'description' => 'nullable|string',
+            'description_ar' => 'nullable|string',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
         ]);
@@ -32,7 +34,7 @@ class CategoryController extends Controller
         $validated['is_active'] = $request->boolean('is_active');
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
         Category::create($validated);
-        return redirect()->route('admin.categories.index')->with('success', 'Category created.');
+        return redirect()->route('admin.categories.index')->with('success', __('messages.category_created'));
     }
 
     public function edit(Category $category)
@@ -44,7 +46,9 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'name_ar' => 'nullable|string|max:255',
             'description' => 'nullable|string',
+            'description_ar' => 'nullable|string',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
         ]);
@@ -52,15 +56,15 @@ class CategoryController extends Controller
         $validated['is_active'] = $request->boolean('is_active');
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
         $category->update($validated);
-        return redirect()->route('admin.categories.index')->with('success', 'Category updated.');
+        return redirect()->route('admin.categories.index')->with('success', __('messages.category_updated'));
     }
 
     public function destroy(Category $category)
     {
         if ($category->items()->count() > 0) {
-            return back()->with('error', 'Cannot delete category with items. Remove items first.');
+            return back()->with('error', __('messages.category_has_items'));
         }
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('success', 'Category deleted.');
+        return redirect()->route('admin.categories.index')->with('success', __('messages.category_deleted'));
     }
 }

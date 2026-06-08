@@ -99,7 +99,7 @@ class OrderTrackingController extends Controller
 
         if (!$order->canBeViewedBy(auth()->user(), null, $token)) {
             return redirect()->route('order.track', ['phone' => $order->customer_phone])
-                ->with('error', 'Please verify your phone number to view this order.');
+                ->with('error', __('messages.verify_phone'));
         }
 
         Order::markSessionVerified($order->id);

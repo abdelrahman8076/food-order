@@ -27,7 +27,7 @@ class CouponController extends Controller
 
         Coupon::create($validated);
 
-        return redirect()->route('admin.coupons.index')->with('success', 'Coupon created.');
+        return redirect()->route('admin.coupons.index')->with('success', __('messages.coupon_created'));
     }
 
     public function edit(Coupon $coupon)
@@ -41,14 +41,14 @@ class CouponController extends Controller
 
         $coupon->update($validated);
 
-        return redirect()->route('admin.coupons.index')->with('success', 'Coupon updated.');
+        return redirect()->route('admin.coupons.index')->with('success', __('messages.coupon_updated'));
     }
 
     public function destroy(Coupon $coupon)
     {
         $coupon->delete();
 
-        return redirect()->route('admin.coupons.index')->with('success', 'Coupon deleted.');
+        return redirect()->route('admin.coupons.index')->with('success', __('messages.coupon_deleted'));
     }
 
     private function validateCoupon(Request $request, ?Coupon $coupon = null): array

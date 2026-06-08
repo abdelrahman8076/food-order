@@ -1,7 +1,7 @@
 <div class="row g-4 mb-4">
     <div class="col-12">
         <div class="admin-card card">
-            <div class="card-header">Revenue & Orders Over Time</div>
+            <div class="card-header">{{ __('admin.analytics.chart_revenue_orders') }}</div>
             <div class="card-body">
                 <canvas id="revenueOrdersChart" height="100"></canvas>
             </div>
@@ -9,7 +9,7 @@
     </div>
     <div class="col-lg-6">
         <div class="admin-card card h-100">
-            <div class="card-header">Top Items Sold (Quantity)</div>
+            <div class="card-header">{{ __('admin.analytics.chart_top_qty') }}</div>
             <div class="card-body">
                 <canvas id="topItemsQtyChart"></canvas>
             </div>
@@ -17,7 +17,7 @@
     </div>
     <div class="col-lg-6">
         <div class="admin-card card h-100">
-            <div class="card-header">Top Items by Revenue</div>
+            <div class="card-header">{{ __('admin.analytics.chart_top_revenue') }}</div>
             <div class="card-body">
                 <canvas id="topItemsRevenueChart"></canvas>
             </div>
@@ -25,7 +25,7 @@
     </div>
     <div class="col-lg-6">
         <div class="admin-card card h-100">
-            <div class="card-header">Orders by Delivery Area</div>
+            <div class="card-header">{{ __('admin.analytics.chart_delivery_area') }}</div>
             <div class="card-body">
                 <canvas id="deliveryAreaChart"></canvas>
             </div>
@@ -33,7 +33,7 @@
     </div>
     <div class="col-lg-6">
         <div class="admin-card card h-100">
-            <div class="card-header">Revenue by Category</div>
+            <div class="card-header">{{ __('admin.analytics.chart_category_revenue') }}</div>
             <div class="card-body">
                 <canvas id="categoryRevenueChart"></canvas>
             </div>
@@ -48,6 +48,11 @@
     const chartColors = ['#ff7e67', '#ffbe76', '#f0932b', '#eb4d4b', '#6ab04c', '#22a6b3', '#686de0', '#30336b', '#95afc0', '#dff9fb'];
     const chartText = 'rgba(255,255,255,0.75)';
     const chartGrid = 'rgba(255,255,255,0.08)';
+    const i18n = {
+        revenue: @json(__('admin.analytics.chart_revenue_label')),
+        orders: @json(__('admin.analytics.orders')),
+        quantity: @json(__('admin.analytics.chart_quantity')),
+    };
 
     const defaultOptions = {
         responsive: true,
@@ -81,7 +86,7 @@
             labels: revenueByDay.map(row => row.date),
             datasets: [
                 {
-                    label: 'Revenue ($)',
+                    label: i18n.revenue,
                     data: revenueByDay.map(row => row.revenue),
                     borderColor: '#ff7e67',
                     backgroundColor: 'rgba(255,126,103,0.15)',
@@ -89,7 +94,7 @@
                     yAxisID: 'y'
                 },
                 {
-                    label: 'Orders',
+                    label: i18n.orders,
                     data: revenueByDay.map(row => row.orders),
                     borderColor: '#ffbe76',
                     backgroundColor: 'rgba(255,190,118,0.15)',
@@ -105,13 +110,13 @@
                 y: {
                     ...defaultOptions.scales.y,
                     position: 'left',
-                    title: { display: true, text: 'Revenue ($)', color: chartText }
+                    title: { display: true, text: i18n.revenue, color: chartText }
                 },
                 y1: {
                     ...defaultOptions.scales.y,
                     position: 'right',
                     grid: { drawOnChartArea: false },
-                    title: { display: true, text: 'Orders', color: chartText }
+                    title: { display: true, text: i18n.orders, color: chartText }
                 }
             }
         }
@@ -150,7 +155,7 @@
         'topItemsQtyChart',
         topItemsByQuantity.map(row => row.name),
         topItemsByQuantity.map(row => row.quantity),
-        'Quantity',
+        i18n.quantity,
         '#ff7e67'
     );
 
@@ -158,7 +163,7 @@
         'topItemsRevenueChart',
         topItemsByRevenue.map(row => row.name),
         topItemsByRevenue.map(row => row.revenue),
-        'Revenue ($)',
+        i18n.revenue,
         '#ffbe76'
     );
 

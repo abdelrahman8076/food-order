@@ -27,7 +27,7 @@ class CartController extends Controller
                 $items[] = (object) [
                     'id' => $item->id,
                     'slug' => $item->slug,
-                    'name' => $item->name,
+                    'name' => $item->localizedName(),
                     'price' => $item->price,
                     'quantity' => $entry['quantity'],
                     'notes' => $entry['notes'],
@@ -53,7 +53,7 @@ class CartController extends Controller
     public function add(Request $request, Item $item)
     {
         if (!$item->is_available) {
-            return back()->with('error', 'This item is not available.');
+            return back()->with('error', __('messages.item_not_available'));
         }
 
         $validated = $request->validate([
@@ -78,11 +78,11 @@ class CartController extends Controller
         if ($request->wantsJson()) {
             return response()->json([
                 'cart_count' => CartHelper::cartCount($cart),
-                'message' => 'Added to cart',
+                'message' => __('messages.item_added_to_cart', ['name' => $item->localizedName()]),
             ]);
         }
 
-        return back()->with('success', $item->name . ' added to cart.');
+        return back()->with('success', __('messages.item_added_to_cart', ['name' => $item->localizedName()]));
     }
 
     public function update(Request $request)
@@ -97,7 +97,7 @@ class CartController extends Controller
         $id = (int) $validated['item_id'];
 
         if (!isset($cart[$id])) {
-            return back()->with('error', 'Item not found in cart.');
+            return back()->with('error', __('messages.item_not_in_cart'));
         }
 
         $notes = isset($validated['notes']) && trim($validated['notes']) !== ''
@@ -115,7 +115,7 @@ class CartController extends Controller
             return response()->json(['cart_count' => CartHelper::cartCount($cart)]);
         }
 
-        return back()->with('success', 'Item updated.');
+        return back()->with('success', __('messages.item_updated'));
     }
 
     public function remove(Request $request, Item $item)
@@ -128,6 +128,6 @@ class CartController extends Controller
             return response()->json(['cart_count' => CartHelper::cartCount($cart)]);
         }
 
-        return back()->with('success', 'Item removed from cart.');
+        return back()->with('success', __('messages.item_removed'));
     }
 }

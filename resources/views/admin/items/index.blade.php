@@ -1,20 +1,20 @@
 @extends('layouts.admin')
 
-@section('title', 'Items')
+@section('title', __('admin.items.title'))
 
 @section('content')
 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
     <div>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-1">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Admin</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Menu Items</li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ __('common.admin') }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ __('admin.items.breadcrumb_items') }}</li>
             </ol>
         </nav>
-        <h1 class="h3 m-0 fw-bold text-white">Menu Catalog</h1>
+        <h1 class="h3 m-0 fw-bold text-white">{{ __('admin.items.catalog') }}</h1>
     </div>
     <a href="{{ route('admin.items.create') }}" class="btn btn-admin-primary d-inline-flex align-items-center gap-2">
-        <i class="bi bi-plus-circle-fill"></i> Add New Menu Item
+        <i class="bi bi-plus-circle-fill"></i> {{ __('admin.items.add') }}
     </a>
 </div>
 
@@ -28,7 +28,7 @@
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white bg-opacity-5 text-muted border-secondary border-opacity-25"><i class="bi bi-filter"></i></span>
                         <select name="category_id" class="form-select form-select-sm" onchange="document.getElementById('catalogFilterForm').submit()">
-                            <option value="">All Categories Displayed</option>
+                            <option value="">{{ __('admin.items.filter_all_categories') }}</option>
                             @foreach($categories as $c)
                                 <option value="{{ $c->id }}" {{ request('category_id') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
                             @endforeach
@@ -38,7 +38,7 @@
 
                 <div class="col-auto">
                     <span class="text-white-50 small fw-medium">
-                        Showing <span class="text-accent-yellow fw-bold">{{ $items->count() }}</span> items this page
+                        {!! __('admin.items.showing_count', ['count' => '<span class="text-accent-yellow fw-bold">' . $items->count() . '</span>']) !!}
                     </span>
                 </div>
 
@@ -50,12 +50,12 @@
         <table class="table table-hover align-middle mb-0">
             <thead>
                 <tr>
-                    <th style="width: 45%;">Item Name Details</th>
-                    <th style="width: 15%;">Category</th>
-                    <th style="width: 12%;">Base Price</th>
-                    <th style="width: 11%;">Availability</th>
-                    <th style="width: 11%;">Featured</th>
-                    <th style="width: 6%;" class="text-end">Actions</th>
+                    <th style="width: 45%;">{{ __('admin.items.col_name') }}</th>
+                    <th style="width: 15%;">{{ __('admin.items.col_category') }}</th>
+                    <th style="width: 12%;">{{ __('admin.items.col_price') }}</th>
+                    <th style="width: 11%;">{{ __('admin.items.col_availability') }}</th>
+                    <th style="width: 11%;">{{ __('admin.items.col_featured') }}</th>
+                    <th style="width: 6%;" class="text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -89,16 +89,16 @@
 
                         <td>
                             @if($item->is_available)
-                                <x-admin.status-pill variant="success" :dot="true">Active</x-admin.status-pill>
+                                <x-admin.status-pill variant="success" :dot="true">{{ __('admin.items.active') }}</x-admin.status-pill>
                             @else
-                                <x-admin.status-pill variant="muted">Muted</x-admin.status-pill>
+                                <x-admin.status-pill variant="muted">{{ __('admin.items.muted') }}</x-admin.status-pill>
                             @endif
                         </td>
 
                         <td>
                             @if($item->is_featured)
                                 <x-admin.status-pill variant="featured">
-                                    <i class="bi bi-star-fill fs-xs"></i> Pinned
+                                    <i class="bi bi-star-fill fs-xs"></i> {{ __('admin.items.pinned') }}
                                 </x-admin.status-pill>
                             @else
                                 <span class="text-white-50 opacity-25 px-2">—</span>
@@ -107,13 +107,13 @@
 
                         <td class="text-end">
                             <div class="d-flex align-items-center justify-content-end gap-1.5">
-                                <a href="{{ route('admin.items.edit', $item) }}" class="btn btn-icon-action btn-edit-tint" title="Edit Item parameters configuration">
+                                <a href="{{ route('admin.items.edit', $item) }}" class="btn btn-icon-action btn-edit-tint" title="{{ __('admin.items.edit_title') }}">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <form action="{{ route('admin.items.destroy', $item) }}" method="POST" class="m-0 d-inline" onsubmit="return confirm('Are you sure you want to completely erase {{ addslashes($item->name) }} from current operational databases? This cannot be undone.');">
+                                <form action="{{ route('admin.items.destroy', $item) }}" method="POST" class="m-0 d-inline" onsubmit="return confirm(@json(__('admin.items.delete_confirm', ['name' => $item->name])));">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-icon-action btn-delete-tint" title="Delete product item forever">
+                                    <button type="submit" class="btn btn-icon-action btn-delete-tint" title="{{ __('admin.items.delete_title') }}">
                                         <i class="bi bi-trash3"></i>
                                     </button>
                                 </form>
@@ -124,8 +124,8 @@
                     <tr>
                         <td colspan="6" class="text-center py-5">
                             <div class="text-muted display-6 mb-2"><i class="bi bi-inbox-fill opacity-20"></i></div>
-                            <h6 class="text-white fw-semibold">No Menu Items Found</h6>
-                            <p class="text-muted small max-w-xs mx-auto mb-0">No entries matched your specified category. Try clearing filters or create a new inventory asset entry.</p>
+                            <h6 class="text-white fw-semibold">{{ __('admin.items.empty_title') }}</h6>
+                            <p class="text-muted small max-w-xs mx-auto mb-0">{{ __('admin.items.empty_body') }}</p>
                         </td>
                     </tr>
                 @endforelse

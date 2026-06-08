@@ -20,6 +20,17 @@ class OrderService
     {
     }
 
+    public const STATUS_KEYS = [
+        'pending',
+        'confirmed',
+        'preparing',
+        'ready',
+        'out_for_delivery',
+        'delivered',
+        'cancelled',
+    ];
+
+    /** @deprecated Use statusLabel() instead */
     public const STATUSES = [
         'pending' => 'Order Placed',
         'confirmed' => 'Confirmed',
@@ -27,7 +38,16 @@ class OrderService
         'ready' => 'Ready for Pickup',
         'out_for_delivery' => 'Picked up for Delivery',
         'delivered' => 'Delivered',
+        'cancelled' => 'Cancelled',
     ];
+
+    public static function statusLabel(string $status): string
+    {
+        $key = 'orders.statuses.'.$status;
+        $label = __($key);
+
+        return $label !== $key ? $label : ucfirst(str_replace('_', ' ', $status));
+    }
 
     public const TRANSITIONS = [
         'pending' => ['confirmed', 'cancelled'],
@@ -51,7 +71,7 @@ class OrderService
                 $total = $item->price * $entry['quantity'];
                 $items[] = (object) [
                     'id' => $item->id,
-                    'name' => $item->name,
+                    'name' => $item->localizedName(),
                     'price' => $item->price,
                     'quantity' => $entry['quantity'],
                     'notes' => $entry['notes'],
@@ -97,7 +117,7 @@ class OrderService
     {
         $built = $this->buildCartItems($cart);
         if (empty($built['items'])) {
-            throw new InvalidArgumentException('No valid items in cart.');
+            throw new InvalidArgumentException(__('messages.no_valid_cart_items'));
         }
 
         $orderType = 'delivery';
@@ -107,7 +127,7 @@ class OrderService
         if (!empty($customerData['coupon_id'])) {
             $coupon = Coupon::find($customerData['coupon_id']);
             if (!$coupon) {
-                throw new InvalidArgumentException('The applied coupon is no longer valid.');
+                throw new InvalidArgumentException(__('messages.coupon_no_longer_valid'));
             }
             $applied = $this->couponService->apply($coupon, $built['subtotal']);
             $discount = $applied['discount'];
@@ -117,7 +137,7 @@ class OrderService
         if (!empty($customerData['area_id'])) {
             $area = DeliveryArea::active()->find($customerData['area_id']);
             if (!$area) {
-                throw new InvalidArgumentException('Please select a valid delivery area.');
+                throw new InvalidArgumentException(__('messages.invalid_delivery_area'));
             }
             $areaDeliveryFee = (float) $area->delivery_fee;
         }
@@ -164,7 +184,7 @@ class OrderService
                 OrderItem::create([
                     'order_id' => $order->id,
                     'item_id' => $item->id,
-                    'item_name' => $item->name,
+                    'item_name' => $item->localizedName(),
                     'unit_price' => $item->price,
                     'quantity' => $entry['quantity'],
                     'notes' => $entry['notes'],
@@ -186,7 +206,10 @@ class OrderService
     {
         $allowed = self::TRANSITIONS[$order->status] ?? [];
         if (!in_array($newStatus, $allowed, true)) {
-            throw new InvalidArgumentException("Cannot transition from {$order->status} to {$newStatus}.");
+            throw new InvalidArgumentException(__('messages.invalid_status_transition', [
+                'from' => $order->status,
+                'to' => $newStatus,
+            ]));
         }
 
         $order->update(['status' => $newStatus]);
@@ -201,7 +224,7 @@ class OrderService
         $flow = ['pending', 'confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered'];
         $index = array_search($order->status, $flow, true);
         if ($index === false || $index >= count($flow) - 1) {
-            throw new InvalidArgumentException('Order cannot be advanced further.');
+            throw new InvalidArgumentException(__('messages.cannot_advance_order'));
         }
 
         return $this->updateStatus($order, $flow[$index + 1]);
@@ -217,7 +240,7 @@ class OrderService
             return [
                 [
                     'key' => 'cancelled',
-                    'label' => 'Cancelled',
+                    'label' => self::statusLabel('cancelled'),
                     'state' => 'current',
                     'timestamp' => $logs->get('cancelled')?->created_at ?? $order->updated_at,
                 ],
@@ -227,7 +250,8 @@ class OrderService
         $steps = [];
         $passedCurrent = false;
 
-        foreach (self::STATUSES as $key => $label) {
+        foreach (array_diff(self::STATUS_KEYS, ['cancelled']) as $key) {
+            $label = self::statusLabel($key);
             $timestamp = $this->getStatusTimestamp($order, $key, $logs);
             $state = 'pending';
 
@@ -246,7 +270,7 @@ class OrderService
 
     public function getCurrentStep(Order $order): int
     {
-        $keys = array_keys(self::STATUSES);
+        $keys = array_values(array_diff(self::STATUS_KEYS, ['cancelled']));
         $index = array_search($order->status, $keys, true);
 
         return $index !== false ? $index : 0;
@@ -256,7 +280,7 @@ class OrderService
     {
         return [
             'status' => $order->status,
-            'status_label' => self::STATUSES[$order->status] ?? ucfirst($order->status),
+            'status_label' => self::statusLabel($order->status),
             'current_step' => $this->getCurrentStep($order),
             'timeline' => collect($this->getTimeline($order))->map(fn ($s) => [
                 'key' => $s['key'],

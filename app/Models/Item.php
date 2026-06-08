@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use App\Concerns\HasLocalizedAttributes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLocalizedAttributes;
 
     protected $fillable = [
         'category_id',
         'name',
+        'name_ar',
         'slug',
         'description',
+        'description_ar',
         'price',
         'image',
         'is_available',

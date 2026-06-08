@@ -3,14 +3,14 @@
 <div class="card food-card" id="item-{{ $item->id }}">
     <a href="{{ route('menu.item', $item->slug) }}" class="food-card-link text-decoration-none">
         <div class="food-header">
-            <img src="{{ $item->imageUrl() }}" alt="{{ $item->name }}" loading="lazy">
+            <img src="{{ $item->imageUrl() }}" alt="{{ $item->localizedName() }}" loading="lazy">
             @unless($item->is_available)
-                <div class="sold-out-overlay">Sold Out</div>
+                <div class="sold-out-overlay">{{ __('menu.sold_out_overlay') }}</div>
             @endunless
         </div>
         <div class="card-body d-flex flex-column pb-0">
-            <h6 class="food-title text-truncate mb-1">{{ $item->name }}</h6>
-            <p class="food-desc mb-0">{{ $item->description ?: 'Homemade with love.' }}</p>
+            <h6 class="food-title text-truncate mb-1">{{ $item->localizedName() }}</h6>
+            <p class="food-desc mb-0">{{ $item->localizedDescription() ?: __('menu.fallback_description_short') }}</p>
         </div>
     </a>
     <div class="card-body pt-2 d-flex justify-content-between align-items-center">

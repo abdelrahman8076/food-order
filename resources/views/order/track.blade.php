@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Track Order')
+@section('title', __('orders.track_title'))
 
 @section('content')
 <div class="container py-4 py-md-5">
     
     <!-- Page Header Context -->
     <div class="mb-4">
-        <span class="text-uppercase tracking-widest small text-warning fw-bold mb-1 d-block">Live Updates</span>
-        <h1 class="display-5 fw-black text-white m-0">Track <span class="italic-serif text-accent-yellow">Order</span></h1>
-        <p class="text-white-50 small mt-1 mb-0">Monitor your fresh, homemade meals on their way to you.</p>
+        <span class="text-uppercase tracking-widest small text-warning fw-bold mb-1 d-block">{{ __('orders.live_updates') }}</span>
+        <h1 class="display-5 fw-black text-white m-0">{{ __('orders.track_heading') }} <span class="italic-serif text-accent-yellow">{{ __('orders.track_heading_accent') }}</span></h1>
+        <p class="text-white-50 small mt-1 mb-0">{{ __('orders.track_subtext') }}</p>
     </div>
 
     @if(session('error'))
@@ -26,7 +26,7 @@
                 <div class="input-icon-group position-relative">
                     <i class="bi bi-telephone text-white-50 position-absolute top-50 start-0 translate-middle-y ms-3 fs-5"></i>
                     <input type="tel" name="phone" class="form-control tracking-glass-input ps-5"
-                           placeholder="Phone number used at checkout"
+                           placeholder="{{ __('orders.phone_placeholder') }}"
                            value="{{ request('phone', $searchedPhone ?? '') }}" required>
                 </div>
             </div>
@@ -36,7 +36,7 @@
             @endif
             <div class="col-md-4">
                 <button type="submit" class="btn btn-primary-orange w-100 py-25 fw-bold text-uppercase tracking-wider rounded-3 shadow-sm">
-                    <i class="bi bi-search me-2 small"></i>Find My Orders
+                    <i class="bi bi-search me-2 small"></i>{{ __('orders.find_orders') }}
                 </button>
             </div>
         </form>
@@ -58,9 +58,9 @@
             @endphp
 
             <div class="d-flex align-items-center justify-content-between mb-3">
-                <h6 class="text-white-50 small text-uppercase tracking-wider m-0 fw-semibold">Your Orders (Last 15 Days)</h6>
+                <h6 class="text-white-50 small text-uppercase tracking-wider m-0 fw-semibold">{{ __('orders.list_heading') }}</h6>
                 <span class="badge bg-dark border border-secondary border-opacity-25 text-white-50 fw-normal">
-                    {{ $orders->count() }} {{ Str::plural('Record', $orders->count()) }}
+                    {{ $orders->count() }} {{ $orders->count() === 1 ? __('orders.record') : __('orders.records') }}
                 </span>
             </div>
 
@@ -102,10 +102,10 @@
                                             {{ $listedOrder->order_number }}
                                         </div>
                                         <div class="text-white-50 small d-flex flex-wrap align-items-center gap-2">
-                                            <span>{{ $listedOrder->created_at->format('M d, Y · g:i A') }}</span>
+                                            <span>{{ $listedOrder->created_at->locale(app()->getLocale())->translatedFormat('M d, Y · g:i A') }}</span>
                                             @if($isListedActive)
                                                 <span class="pulse-indicator-dot"></span>
-                                                <span class="text-accent-yellow fw-medium">Active Tracking</span>
+                                                <span class="text-accent-yellow fw-medium">{{ __('orders.active_tracking') }}</span>
                                             @endif
                                         </div>
                                     </div>
@@ -116,7 +116,7 @@
                                             :variant="$statusVariant"
                                             class="mb-1"
                                             id="statusBadge-{{ $listedOrder->id }}">
-                                            {{ \App\Services\OrderService::STATUSES[$listedOrder->status] ?? ucfirst($listedOrder->status) }}
+                                            {{ __('orders.statuses.' . $listedOrder->status) }}
                                         </x-public.status-pill>
                                         <div class="text-white font-serif small fw-bold">${{ number_format($listedOrder->total, 2) }}</div>
                                     </div>
@@ -212,14 +212,14 @@
                 <div class="mb-3 text-muted display-6"><i class="bi bi-search-heart"></i></div>
                 <p class="text-white-50 m-0 fs-6">
                     @if($searchedPhone)
-                        No orders found associated with this phone number in the past 15 days.
+                        {{ __('orders.empty_phone') }}
                     @elseif($searchedOrderNumber)
-                        No registration logs match order number <strong class="text-warning font-serif">{{ $searchedOrderNumber }}</strong>.
+                        {!! __('orders.empty_order_number', ['order_number' => '<strong class="text-warning font-serif">' . e($searchedOrderNumber) . '</strong>']) !!}
                     @else
-                        No orders found matching the criteria.
+                        {{ __('orders.empty_generic') }}
                     @endif
                 </p>
-                <a href="{{ route('menu.index') }}" class="btn btn-sm btn-outline-warning mt-3 px-4 rounded-pill">Explore Our Kitchen Menu</a>
+                <a href="{{ route('menu.index') }}" class="btn btn-sm btn-outline-warning mt-3 px-4 rounded-pill">{{ __('orders.explore_menu') }}</a>
             </x-glass-card>
         @endif
     @endif

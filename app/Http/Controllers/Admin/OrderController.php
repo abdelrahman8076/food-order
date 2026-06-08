@@ -85,7 +85,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'status' => 'required|in:' . implode(',', array_merge(array_keys(OrderService::STATUSES), ['cancelled'])),
+            'status' => 'required|in:' . implode(',', OrderService::STATUS_KEYS),
         ]);
 
         try {
@@ -94,7 +94,7 @@ class OrderController extends Controller
             return back()->with('error', $e->getMessage());
         }
 
-        return back()->with('success', 'Order status updated.');
+        return back()->with('success', __('messages.order_status_updated'));
     }
 
     public function advance(Order $order)
@@ -105,7 +105,7 @@ class OrderController extends Controller
             return back()->with('error', $e->getMessage());
         }
 
-        return back()->with('success', 'Order advanced to next stage.');
+        return back()->with('success', __('messages.order_advanced'));
     }
 
     public function updateDeliveryFee(Request $request, Order $order)
@@ -117,7 +117,7 @@ class OrderController extends Controller
         $order->delivery_fee = $validated['delivery_fee'];
         $this->orderService->recalculateOrderTotal($order);
 
-        return back()->with('success', 'Delivery fee updated.');
+        return back()->with('success', __('messages.delivery_fee_saved'));
     }
 
     public function settings()
@@ -141,6 +141,6 @@ class OrderController extends Controller
 
         StoreSetting::current()->update($validated);
 
-        return back()->with('success', 'Store settings updated.');
+        return back()->with('success', __('messages.settings_updated'));
     }
 }

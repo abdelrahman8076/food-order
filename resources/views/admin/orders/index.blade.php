@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Orders')
+@section('title', __('admin.orders.title'))
 
 @section('content')
 <!-- Page Header and Live Indicator -->
@@ -8,14 +8,14 @@
     <div>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-1">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Admin</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Orders Platform</li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ __('common.admin') }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ __('admin.orders.breadcrumb') }}</li>
             </ol>
         </nav>
         <div class="d-flex align-items-center gap-2">
-            <h1 class="h3 m-0 fw-bold text-white">Live Kitchen Board</h1>
+            <h1 class="h3 m-0 fw-bold text-white">{{ __('admin.orders.kitchen_board') }}</h1>
             <x-admin.status-pill variant="success" class="gap-1">
-                <span class="live-dot-pulse"></span> Streaming Live
+                <span class="live-dot-pulse"></span> {{ __('admin.orders.streaming_live') }}
             </x-admin.status-pill>
         </div>
     </div>
@@ -33,7 +33,7 @@
 <!-- Section B: Historical Log / Advanced Audit Ledger -->
 <div class="d-flex align-items-center gap-2 mb-3">
     <i class="bi bi-clock-history text-muted fs-5"></i>
-    <h2 class="h5 m-0 fw-bold text-white">All Master Orders</h2>
+    <h2 class="h5 m-0 fw-bold text-white">{{ __('admin.orders.all_orders') }}</h2>
 </div>
 
 <!-- Integrated Control Bar Block Component -->
@@ -46,7 +46,7 @@
                 <div class="col-12 col-sm-4 col-md-3">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white bg-opacity-5 text-muted border-secondary border-opacity-25"><i class="bi bi-search"></i></span>
-                        <input type="text" name="order_number" class="form-control form-control-sm" placeholder="Search order number..." value="{{ request('order_number') }}">
+                        <input type="text" name="order_number" class="form-control form-control-sm" placeholder="{{ __('admin.orders.search_placeholder') }}" value="{{ request('order_number') }}">
                     </div>
                 </div>
 
@@ -55,9 +55,9 @@
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white bg-opacity-5 text-muted border-secondary border-opacity-25"><i class="bi bi-funnel"></i></span>
                         <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                            <option value="">All Fulfillment Statuses</option>
-                            @foreach(array_merge(\App\Services\OrderService::STATUSES, ['cancelled' => 'Cancelled']) as $key => $label)
-                                <option value="{{ $key }}" {{ request('status') === $key ? 'selected' : '' }}>{{ $label }}</option>
+                            <option value="">{{ __('admin.orders.filter_all_statuses') }}</option>
+                            @foreach(\App\Services\OrderService::STATUS_KEYS as $key)
+                                <option value="{{ $key }}" {{ request('status') === $key ? 'selected' : '' }}>{{ \App\Services\OrderService::statusLabel($key) }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -65,9 +65,9 @@
 
                 <!-- Control Submit Modifiers Trigger Actions -->
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-sm btn-admin-primary px-3">Apply Filter</button>
+                    <button type="submit" class="btn btn-sm btn-admin-primary px-3">{{ __('admin.orders.apply_filter') }}</button>
                     @if(request()->has('order_number') || request()->has('status'))
-                        <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-admin-outline px-2 ms-1" title="Clear configuration filters">
+                        <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-admin-outline px-2 ms-1" title="{{ __('admin.orders.clear_filters') }}">
                             <i class="bi bi-x-circle"></i>
                         </a>
                     @endif
@@ -84,13 +84,13 @@
         <table class="table table-hover align-middle mb-0 admin-table">
             <thead>
                 <tr>
-                    <th style="width: 12%;">Order ID</th>
-                    <th style="width: 25%;">Customer Details</th>
-                    <th style="width: 13%;">Distribution Type</th>
-                    <th style="width: 15%;">Fulfillment Status</th>
-                    <th style="width: 12%;">Financial Total</th>
-                    <th style="width: 15%;">Submission Date</th>
-                    <th style="width: 8%;" class="text-end">Actions</th>
+                    <th style="width: 12%;">{{ __('admin.orders.col_order_id') }}</th>
+                    <th style="width: 25%;">{{ __('admin.orders.col_customer') }}</th>
+                    <th style="width: 13%;">{{ __('admin.orders.col_type') }}</th>
+                    <th style="width: 15%;">{{ __('admin.orders.col_status') }}</th>
+                    <th style="width: 12%;">{{ __('admin.orders.col_total') }}</th>
+                    <th style="width: 15%;">{{ __('admin.orders.col_date') }}</th>
+                    <th style="width: 8%;" class="text-end">{{ __('admin.orders.col_actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -117,11 +117,11 @@
                         <td>
                             @if(strtolower($order->order_type) === 'delivery')
                                 <span class="text-info small fw-medium d-inline-flex align-items-center gap-1">
-                                    <i class="bi bi-truck"></i> Delivery
+                                    <i class="bi bi-truck"></i> {{ __('admin.orders.type_delivery') }}
                                 </span>
                             @else
                                 <span class="text-accent-orange small fw-medium d-inline-flex align-items-center gap-1">
-                                    <i class="bi bi-bag-heart"></i> Takeout
+                                    <i class="bi bi-bag-heart"></i> {{ __('admin.orders.type_takeout') }}
                                 </span>
                             @endif
                         </td>
@@ -130,7 +130,7 @@
                         <td>
                             @php
                                 $statusRaw = strtolower($order->status);
-                                $statusLabel = \App\Services\OrderService::STATUSES[$order->status] ?? ucfirst($order->status);
+                                $statusLabel = \App\Services\OrderService::statusLabel($order->status);
                                 $statusVariant = match($statusRaw) {
                                     'pending' => 'warning',
                                     'completed', 'delivered' => 'success',
@@ -149,12 +149,12 @@
                         <!-- System Timestamps Formatted Strings -->
                         <td>
                             <div class="small text-white-50">{{ $order->created_at->format('M d, Y') }}</div>
-                            <div class="text-muted fs-xs" style="margin-top: -2px;">{{ $order->created_at->format('H:i') }} hrs</div>
+                            <div class="text-muted fs-xs" style="margin-top: -2px;">{{ $order->created_at->format('H:i') }} {{ __('admin.orders.hrs') }}</div>
                         </td>
 
                         <!-- Action Controls Row Grid Block Linking -->
                         <td class="text-end">
-                            <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-icon-action btn-view-tint" title="Inspect complete order logs">
+                            <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-icon-action btn-view-tint" title="{{ __('admin.orders.inspect_title') }}">
                                 <i class="bi bi-eye"></i>
                             </a>
                         </td>
@@ -163,8 +163,8 @@
                     <tr>
                         <td colspan="7" class="text-center py-5">
                             <div class="text-muted display-5 mb-2"><i class="bi bi-clipboard-x opacity-25"></i></div>
-                            <h6 class="text-white fw-semibold">No Orders Registered</h6>
-                            <p class="text-muted small max-w-xs mx-auto mb-0">No entries currently match that specific tracking signature parameters layout.</p>
+                            <h6 class="text-white fw-semibold">{{ __('admin.orders.empty_title') }}</h6>
+                            <p class="text-muted small max-w-xs mx-auto mb-0">{{ __('admin.orders.empty_body') }}</p>
                         </td>
                     </tr>
                 @endforelse

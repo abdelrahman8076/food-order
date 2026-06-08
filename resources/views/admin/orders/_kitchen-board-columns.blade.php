@@ -1,7 +1,7 @@
 @foreach(['pending', 'confirmed', 'preparing', 'ready', 'out_for_delivery'] as $status)
 <div class="col-md-6 col-lg-4 col-xl">
     <div class="admin-board-column">
-        <h6 class="admin-board-title">{{ \App\Services\OrderService::STATUSES[$status] }}</h6>
+        <h6 class="admin-board-title">{{ \App\Services\OrderService::statusLabel($status) }}</h6>
         @forelse($boardOrders->get($status, collect()) as $order)
             <div class="admin-order-card">
                 <div class="d-flex justify-content-between align-items-start mb-2">
@@ -18,13 +18,13 @@
                 <div class="d-flex gap-1">
                     <form action="{{ route('admin.orders.advance', $order) }}" method="POST" class="flex-grow-1">
                         @csrf
-                        <button type="submit" class="btn btn-sm btn-admin-primary w-100">Advance</button>
+                        <button type="submit" class="btn btn-sm btn-admin-primary w-100">{{ __('admin.orders.advance') }}</button>
                     </form>
-                    <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-admin-outline">View</a>
+                    <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-admin-outline">{{ __('common.view') }}</a>
                 </div>
             </div>
         @empty
-            <p class="small text-muted">No orders</p>
+            <p class="small text-muted">{{ __('admin.orders.no_orders_column') }}</p>
         @endforelse
     </div>
 </div>

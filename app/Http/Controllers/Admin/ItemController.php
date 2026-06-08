@@ -32,7 +32,9 @@ class ItemController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
+            'name_ar' => 'nullable|string|max:255',
             'description' => 'nullable|string',
+            'description_ar' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'sort_order' => 'nullable|integer|min:0',
             'is_available' => 'boolean',
@@ -49,7 +51,7 @@ class ItemController extends Controller
         }
 
         Item::create($validated);
-        return redirect()->route('admin.items.index')->with('success', 'Item created.');
+        return redirect()->route('admin.items.index')->with('success', __('messages.item_created'));
     }
 
     public function edit(Item $item)
@@ -63,7 +65,9 @@ class ItemController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
+            'name_ar' => 'nullable|string|max:255',
             'description' => 'nullable|string',
+            'description_ar' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'sort_order' => 'nullable|integer|min:0',
             'is_available' => 'boolean',
@@ -80,12 +84,12 @@ class ItemController extends Controller
         }
 
         $item->update($validated);
-        return redirect()->route('admin.items.index')->with('success', 'Item updated.');
+        return redirect()->route('admin.items.index')->with('success', __('messages.item_updated_admin'));
     }
 
     public function destroy(Item $item)
     {
         $item->delete();
-        return redirect()->route('admin.items.index')->with('success', 'Item deleted.');
+        return redirect()->route('admin.items.index')->with('success', __('messages.item_deleted'));
     }
 }

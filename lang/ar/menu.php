@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'القائمة',
+    'badge' => '✨ طازج ومُحضّر',
+    'heading_our' => 'قائمتنا',
+    'heading_menu' => 'الطعام',
+    'subtext' => 'تصفح مجموعتنا المميزة من الأطباق المنزلية المحضّرة حسب الطلب.',
+    'filter_all' => 'جميع الأصناف',
+    'choices' => ':count خيار',
+    'breadcrumb' => 'القائمة',
+    'empty_category' => 'لا توجد عناصر في هذه الفئة حالياً.',
+    'view_full' => 'عرض القائمة الكاملة',
+    'sold_out' => 'نفد',
+    'sold_out_overlay' => 'نفد',
+    'select_quantity' => 'اختر الكمية:',
+    'qty_decrease' => 'تقليل الكمية',
+    'qty_increase' => 'زيادة الكمية',
+    'special_instructions' => 'تعليمات خاصة',
+    'notes_placeholder' => 'مثال: بدون بصل، الصلصات على الجانب...',
+    'notes_counter' => ':count / 50 حرف',
+    'fallback_description' => 'محضّر بحب، طازج من أجلك.',
+    'fallback_description_short' => 'محضّر بحب.',
+    'add_to_cart' => 'أضف إلى الطلب',
+    'out_of_stock' => 'غير متوفر اليوم',
+    'back' => '← العودة إلى القائمة',
+    'related_title' => 'إضافات مكمّلة',
+];

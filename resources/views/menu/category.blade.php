@@ -1,19 +1,19 @@
 @extends('layouts.app')
 
-@section('title', $category->name)
+@section('title', $category->localizedName())
 
 @section('content')
 <div class="container">
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb breadcrumb-glass">
-            <li class="breadcrumb-item"><a href="{{ route('menu.index') }}">Menu</a></li>
-            <li class="breadcrumb-item active">{{ $category->name }}</li>
+            <li class="breadcrumb-item"><a href="{{ route('menu.index') }}">{{ __('menu.breadcrumb') }}</a></li>
+            <li class="breadcrumb-item active">{{ $category->localizedName() }}</li>
         </ol>
     </nav>
 
-    <h1 class="page-heading mb-2">{{ $category->name }}</h1>
-    @if($category->description)
-        <p class="text-white-50 mb-4">{{ $category->description }}</p>
+    <h1 class="page-heading mb-2">{{ $category->localizedName() }}</h1>
+    @if($category->localizedDescription())
+        <p class="text-white-50 mb-4">{{ $category->localizedDescription() }}</p>
     @endif
 
     <div class="row g-3 g-md-4">
@@ -24,14 +24,14 @@
         @empty
             <div class="col-12">
                 <x-glass-card>
-                    <p class="text-white-50 mb-0">No items in this category right now.</p>
+                    <p class="text-white-50 mb-0">{{ __('menu.empty_category') }}</p>
                 </x-glass-card>
             </div>
         @endforelse
     </div>
 
     <div class="mt-4">
-        <a href="{{ route('menu.index') }}" class="btn btn-outline-glass">View full menu</a>
+        <a href="{{ route('menu.index') }}" class="btn btn-outline-glass">{{ __('menu.view_full') }}</a>
     </div>
 </div>
 @endsection

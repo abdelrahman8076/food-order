@@ -38,7 +38,7 @@ class CheckoutController extends Controller
     {
         $cart = session()->get('cart', []);
         if (empty($cart)) {
-            return redirect()->route('menu.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('menu.index')->with('error', __('messages.cart_empty'));
         }
 
         $built = $this->orderService->buildCartItems($cart);
@@ -92,7 +92,7 @@ class CheckoutController extends Controller
 
         $cart = session()->get('cart', []);
         if (empty($cart)) {
-            return redirect()->route('menu.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('menu.index')->with('error', __('messages.cart_empty'));
         }
 
         $built = $this->orderService->buildCartItems($cart);
@@ -110,14 +110,14 @@ class CheckoutController extends Controller
 
         session()->put('checkout_coupon_id', $coupon->id);
 
-        return $this->flashCheckoutForm($request)->with('success', 'Coupon ' . $coupon->code . ' applied.');
+        return $this->flashCheckoutForm($request)->with('success', __('messages.coupon_applied', ['code' => $coupon->code]));
     }
 
     public function removeCoupon(Request $request)
     {
         session()->forget('checkout_coupon_id');
 
-        return $this->flashCheckoutForm($request)->with('success', 'Coupon removed.');
+        return $this->flashCheckoutForm($request)->with('success', __('messages.coupon_removed'));
     }
 
     public function store(Request $request)
@@ -152,7 +152,7 @@ class CheckoutController extends Controller
 
         $cart = session()->get('cart', []);
         if (empty($cart)) {
-            return redirect()->route('menu.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('menu.index')->with('error', __('messages.cart_empty'));
         }
 
         if ($couponId = session('checkout_coupon_id')) {
@@ -173,7 +173,7 @@ class CheckoutController extends Controller
         return redirect()->route('order.confirmation', [
             'order' => $order->id,
             'token' => $order->tracking_token,
-        ])->with('success', 'Order placed! Your order number is ' . $order->order_number);
+        ])->with('success', __('messages.order_placed', ['number' => $order->order_number]));
     }
 
     private function flashCheckoutForm(Request $request)

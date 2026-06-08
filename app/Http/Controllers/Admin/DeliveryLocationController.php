@@ -29,18 +29,18 @@ class DeliveryLocationController extends Controller
             'is_active' => true,
         ]);
 
-        return back()->with('success', 'City added.');
+        return back()->with('success', __('messages.city_added'));
     }
 
     public function destroyCity(City $city)
     {
         if ($city->deliveryAreas()->count() > 0) {
-            return back()->with('error', 'Cannot delete city with areas. Remove areas first.');
+            return back()->with('error', __('messages.city_has_areas'));
         }
 
         $city->delete();
 
-        return back()->with('success', 'City deleted.');
+        return back()->with('success', __('messages.city_deleted'));
     }
 
     public function storeArea(Request $request)
@@ -56,7 +56,7 @@ class DeliveryLocationController extends Controller
             ->exists();
 
         if ($exists) {
-            return back()->with('error', 'This area already exists for the selected city.');
+            return back()->with('error', __('messages.area_exists'));
         }
 
         DeliveryArea::create([
@@ -66,7 +66,7 @@ class DeliveryLocationController extends Controller
             'delivery_fee' => $validated['delivery_fee'],
         ]);
 
-        return back()->with('success', 'Area added.');
+        return back()->with('success', __('messages.area_added'));
     }
 
     public function updateArea(Request $request, DeliveryArea $area)
@@ -77,13 +77,13 @@ class DeliveryLocationController extends Controller
 
         $area->update($validated);
 
-        return back()->with('success', 'Delivery fee updated for ' . $area->name . '.');
+        return back()->with('success', __('messages.delivery_fee_updated', ['area' => $area->name]));
     }
 
     public function destroyArea(DeliveryArea $area)
     {
         $area->delete();
 
-        return back()->with('success', 'Area deleted.');
+        return back()->with('success', __('messages.area_deleted'));
     }
 }
