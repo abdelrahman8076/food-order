@@ -3,29 +3,51 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\StoreSetting;
+use App\Services\OrderService;
+use App\Support\CartHelper;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    public function __construct(private OrderService $orderService)
+    {
+    }
+
     public function index()
     {
-        $cart = session()->get('cart', []);
+        $cart = CartHelper::normalizeCart(session()->get('cart', []));
         $items = [];
         $subtotal = 0;
-        foreach ($cart as $id => $qty) {
+
+        foreach ($cart as $id => $entry) {
             $item = Item::find($id);
             if ($item && $item->is_available) {
-                $items[] = (object)[
+                $total = $item->price * $entry['quantity'];
+                $items[] = (object) [
                     'id' => $item->id,
+                    'slug' => $item->slug,
                     'name' => $item->name,
                     'price' => $item->price,
-                    'quantity' => $qty,
-                    'total' => $item->price * $qty,
+                    'quantity' => $entry['quantity'],
+                    'notes' => $entry['notes'],
+                    'total' => $total,
                 ];
-                $subtotal += $item->price * $qty;
+                $subtotal += $total;
             }
         }
-        return view('cart.index', compact('items', 'subtotal'));
+
+        $settings = StoreSetting::current();
+        $pricing = $this->orderService->calculatePricing($subtotal, 'delivery');
+
+        return view('cart.index', [
+            'items' => $items,
+            'subtotal' => $subtotal,
+            'tax' => $pricing['tax'],
+            'deliveryFee' => $pricing['deliveryFee'],
+            'total' => $pricing['total'],
+            'settings' => $settings,
+        ]);
     }
 
     public function add(Request $request, Item $item)
@@ -33,31 +55,67 @@ class CartController extends Controller
         if (!$item->is_available) {
             return back()->with('error', 'This item is not available.');
         }
-        $cart = session()->get('cart', []);
-        $qty = max(1, (int) $request->get('quantity', 1));
-        $cart[$item->id] = ($cart[$item->id] ?? 0) + $qty;
+
+        $validated = $request->validate([
+            'quantity' => 'nullable|integer|min:1|max:20',
+            'notes' => 'nullable|string|max:50',
+        ]);
+
+        $cart = CartHelper::normalizeCart(session()->get('cart', []));
+        $qty = max(1, (int) ($validated['quantity'] ?? 1));
+        $notes = isset($validated['notes']) && trim($validated['notes']) !== ''
+            ? trim($validated['notes'])
+            : null;
+
+        $existing = $cart[$item->id] ?? ['quantity' => 0, 'notes' => null];
+        $cart[$item->id] = [
+            'quantity' => $existing['quantity'] + $qty,
+            'notes' => $notes ?? $existing['notes'],
+        ];
+
         session()->put('cart', $cart);
+
         if ($request->wantsJson()) {
-            return response()->json(['cart_count' => array_sum($cart), 'message' => 'Added to cart']);
+            return response()->json([
+                'cart_count' => CartHelper::cartCount($cart),
+                'message' => 'Added to cart',
+            ]);
         }
+
         return back()->with('success', $item->name . ' added to cart.');
     }
 
     public function update(Request $request)
     {
-        $cart = session()->get('cart', []);
-        $id = (int) $request->get('item_id');
-        $qty = max(0, (int) $request->get('quantity', 0));
-        if ($qty === 0) {
-            unset($cart[$id]);
-        } else {
-            $cart[$id] = $qty;
+        $validated = $request->validate([
+            'item_id' => 'required|integer',
+            'quantity' => 'required|integer|min:1|max:20',
+            'notes' => 'nullable|string|max:50',
+        ]);
+
+        $cart = CartHelper::normalizeCart(session()->get('cart', []));
+        $id = (int) $validated['item_id'];
+
+        if (!isset($cart[$id])) {
+            return back()->with('error', 'Item not found in cart.');
         }
+
+        $notes = isset($validated['notes']) && trim($validated['notes']) !== ''
+            ? trim($validated['notes'])
+            : null;
+
+        $cart[$id] = [
+            'quantity' => (int) $validated['quantity'],
+            'notes' => $notes,
+        ];
+
         session()->put('cart', $cart);
+
         if ($request->wantsJson()) {
-            return response()->json(['cart_count' => array_sum($cart)]);
+            return response()->json(['cart_count' => CartHelper::cartCount($cart)]);
         }
-        return back()->with('success', 'Cart updated.');
+
+        return back()->with('success', 'Item updated.');
     }
 
     public function remove(Request $request, Item $item)
@@ -65,9 +123,11 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
         unset($cart[$item->id]);
         session()->put('cart', $cart);
+
         if ($request->wantsJson()) {
-            return response()->json(['cart_count' => array_sum($cart)]);
+            return response()->json(['cart_count' => CartHelper::cartCount($cart)]);
         }
+
         return back()->with('success', 'Item removed from cart.');
     }
 }

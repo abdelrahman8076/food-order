@@ -37,11 +37,17 @@ class ItemController extends Controller
             'sort_order' => 'nullable|integer|min:0',
             'is_available' => 'boolean',
             'is_featured' => 'boolean',
+            'image' => 'nullable|image|max:2048',
         ]);
         $validated['slug'] = Str::slug($validated['name']) . '-' . uniqid();
         $validated['is_available'] = $request->boolean('is_available');
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('items', 'public');
+        }
+
         Item::create($validated);
         return redirect()->route('admin.items.index')->with('success', 'Item created.');
     }
@@ -62,11 +68,17 @@ class ItemController extends Controller
             'sort_order' => 'nullable|integer|min:0',
             'is_available' => 'boolean',
             'is_featured' => 'boolean',
+            'image' => 'nullable|image|max:2048',
         ]);
         $validated['slug'] = Str::slug($validated['name']) . '-' . $item->id;
         $validated['is_available'] = $request->boolean('is_available');
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('items', 'public');
+        }
+
         $item->update($validated);
         return redirect()->route('admin.items.index')->with('success', 'Item updated.');
     }

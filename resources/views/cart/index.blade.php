@@ -2,56 +2,247 @@
 
 @section('title', 'Cart')
 
+@push('styles')
+<style>
+    .cart-item {
+        border-bottom: 1px solid var(--glass-border);
+        padding: 1rem 0;
+    }
+
+    .cart-item:last-child { border-bottom: none; }
+
+    .cart-item-row {
+        cursor: pointer;
+        border-radius: 12px;
+        padding: 0.75rem;
+        margin: -0.75rem;
+        transition: background 0.15s ease;
+    }
+
+    .cart-item-row:hover {
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .cart-item.is-editing .cart-item-row {
+        border: 1px solid var(--primary-orange);
+        background: rgba(255, 126, 103, 0.08);
+    }
+
+    .cart-item.is-editing .cart-item-row:hover {
+        background: rgba(255, 126, 103, 0.08);
+    }
+
+    .cart-item-edit {
+        display: none;
+        margin-top: 0.75rem;
+        padding: 1rem;
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .cart-item.is-editing .cart-item-edit { display: block; }
+
+    .cart-qty-control {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .cart-qty-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        cursor: pointer;
+    }
+
+    .cart-qty-btn:hover { border-color: var(--primary-orange); color: var(--primary-orange); }
+
+    .cart-qty-value {
+        width: 40px;
+        text-align: center;
+        font-weight: 700;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="container">
-    <h1 class="mb-4">Your Cart</h1>
+    <h1 class="page-heading mb-4">Your <span>Cart</span></h1>
 
     @if(empty($items))
-        <div class="alert alert-info">
-            Your cart is empty. <a href="{{ route('menu.index') }}">Browse menu</a> to add items.
-        </div>
-        <a href="{{ route('menu.index') }}" class="btn btn-primary">View Menu</a>
+        <x-glass-card>
+            <p class="text-white-50 mb-3">Your cart is empty.</p>
+            <a href="{{ route('menu.index') }}" class="btn btn-primary-orange">Browse Menu</a>
+        </x-glass-card>
     @else
-
-    <div class="row">
+    <div class="row g-4">
         <div class="col-lg-8">
-            <div class="card">
-                <div class="card-body">
-                    @foreach($items as $row)
-                        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
-                            <div>
-                                <strong>{{ $row->name }}</strong>
-                                <span class="text-muted ms-2">${{ number_format($row->price, 2) }} each</span>
+            <x-glass-card>
+                @foreach($items as $row)
+                    <div class="cart-item" id="cart-item-{{ $row->id }}" data-item-id="{{ $row->id }}">
+                        <div class="cart-item-row d-flex justify-content-between align-items-start gap-2">
+                            <div class="flex-grow-1 min-w-0">
+                                <span class="text-white fw-bold">{{ $row->name }}</span>
+                                <span class="text-white-50 small ms-1">${{ number_format($row->price, 2) }} each</span>
+                                <div class="text-white-50 small mt-1">Qty: {{ $row->quantity }}</div>
+                                @if(!empty($row->notes))
+                                    <div class="small text-white-50 mt-1"><i class="bi bi-chat-left-text me-1"></i>{{ $row->notes }}</div>
+                                @endif
                             </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <form action="{{ route('cart.update') }}" method="POST" class="d-inline">
+                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                <span class="price-tag">${{ number_format($row->total, 2) }}</span>
+                                <form action="{{ route('cart.remove', $row->id) }}" method="POST" class="d-inline cart-remove-form">
                                     @csrf
-                                    <input type="hidden" name="item_id" value="{{ $row->id }}">
-                                    <input type="number" name="quantity" value="{{ $row->quantity }}" min="1" max="20" class="form-control form-control-sm" style="width: 60px;" onchange="this.form.submit()">
-                                </form>
-                                <span class="fw-bold">${{ number_format($row->total, 2) }}</span>
-                                <form action="{{ route('cart.remove', $row->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="btn btn-sm btn-outline-glass"><i class="bi bi-trash"></i></button>
                                 </form>
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            </div>
+
+                        <div class="cart-item-edit">
+                            <form action="{{ route('cart.update') }}" method="POST" class="cart-edit-form">
+                                @csrf
+                                <input type="hidden" name="item_id" value="{{ $row->id }}">
+                                <input type="hidden" name="quantity" class="cart-qty-input" value="{{ $row->quantity }}">
+
+                                <label class="form-label text-white-50 small mb-2">Quantity</label>
+                                <div class="cart-qty-control mb-3">
+                                    <button type="button" class="cart-qty-btn cart-qty-minus">−</button>
+                                    <span class="cart-qty-value">{{ $row->quantity }}</span>
+                                    <button type="button" class="cart-qty-btn cart-qty-plus">+</button>
+                                </div>
+
+                                <label class="form-label text-white-50 small mb-2">Special request (optional)</label>
+                                <input type="text" name="notes" class="form-control glass-input cart-notes-input mb-1"
+                                       maxlength="50" placeholder="No onions, extra sauce..."
+                                       value="{{ $row->notes ?? '' }}">
+                                <div class="d-flex justify-content-end mb-3">
+                                    <small class="text-white-50 cart-notes-count">0/50</small>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary-orange flex-grow-1">Save changes</button>
+                                    <button type="button" class="btn btn-outline-glass cart-cancel-btn">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
+            </x-glass-card>
         </div>
         <div class="col-lg-4">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Summary</h5>
-                    <p class="mb-0">Subtotal: <strong>${{ number_format($subtotal, 2) }}</strong></p>
-                    <p class="small text-muted">Tax & delivery calculated at checkout.</p>
-                    <a href="{{ route('checkout.index') }}" class="btn btn-primary w-100">Proceed to Checkout</a>
-                    <a href="{{ route('menu.index') }}" class="btn btn-outline-secondary w-100 mt-2">Continue Shopping</a>
+            <x-glass-card title="Summary">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-white-50">Subtotal</span>
+                    <strong class="text-white">${{ number_format($subtotal, 2) }}</strong>
                 </div>
-            </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-white-50">Tax</span>
+                    <span class="text-white">${{ number_format($tax, 2) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-white-50">Delivery</span>
+                    <span class="text-white">${{ number_format($deliveryFee, 2) }}</span>
+                </div>
+                @if($deliveryFee > 0)
+                    <p class="small text-white-50 mb-2">
+                        Delivery fee applies to orders under ${{ number_format($settings->free_delivery_min, 2) }}.
+                    </p>
+                @else
+                    <p class="small text-white-50 mb-2">Free delivery — your order qualifies.</p>
+                @endif
+                <hr style="border-color: var(--glass-border);">
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-white fw-bold">Total</span>
+                    <strong class="price-tag fs-5">${{ number_format($total, 2) }}</strong>
+                </div>
+                <a href="{{ route('checkout.index') }}" class="btn btn-primary-orange w-100">Proceed to Checkout</a>
+                <a href="{{ route('menu.index') }}" class="btn btn-outline-glass w-100 mt-2">Continue Shopping</a>
+            </x-glass-card>
         </div>
     </div>
     @endif
 </div>
+
+@if(!empty($items))
+@push('scripts')
+<script>
+(function() {
+    const min = 1, max = 20;
+
+    function updateNotesCount(input) {
+        const counter = input.closest('.cart-item-edit').querySelector('.cart-notes-count');
+        if (counter) counter.textContent = input.value.length + '/50';
+    }
+
+    document.querySelectorAll('.cart-notes-input').forEach(function(input) {
+        updateNotesCount(input);
+        input.addEventListener('input', function() { updateNotesCount(input); });
+    });
+
+    document.querySelectorAll('.cart-item-row').forEach(function(row) {
+        row.addEventListener('click', function() {
+            const item = this.closest('.cart-item');
+            const wasEditing = item.classList.contains('is-editing');
+
+            document.querySelectorAll('.cart-item').forEach(function(el) {
+                el.classList.remove('is-editing');
+            });
+
+            if (!wasEditing) {
+                item.classList.add('is-editing');
+                item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+    });
+
+    document.querySelectorAll('.cart-remove-form').forEach(function(form) {
+        form.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+
+    document.querySelectorAll('.cart-cancel-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            this.closest('.cart-item').classList.remove('is-editing');
+        });
+    });
+
+    document.querySelectorAll('.cart-item-edit').forEach(function(panel) {
+        panel.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        const form = panel.querySelector('.cart-edit-form');
+        const qtyInput = form.querySelector('.cart-qty-input');
+        const qtyDisplay = form.querySelector('.cart-qty-value');
+        let qty = parseInt(qtyInput.value, 10);
+
+        form.querySelector('.cart-qty-minus').addEventListener('click', function() {
+            if (qty > min) {
+                qty--;
+                qtyInput.value = qty;
+                qtyDisplay.textContent = qty;
+            }
+        });
+
+        form.querySelector('.cart-qty-plus').addEventListener('click', function() {
+            if (qty < max) {
+                qty++;
+                qtyInput.value = qty;
+                qtyDisplay.textContent = qty;
+            }
+        });
+    });
+})();
+</script>
+@endpush
+@endif
 @endsection

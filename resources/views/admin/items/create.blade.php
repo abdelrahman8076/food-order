@@ -6,7 +6,7 @@
 <h1 class="mb-4">Add Menu Item</h1>
 <div class="card">
     <div class="card-body">
-        <form action="{{ route('admin.items.store') }}" method="POST">
+        <form action="{{ route('admin.items.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-3">
                 <label class="form-label">Category *</label>
@@ -30,6 +30,10 @@
                 <label class="form-label">Price *</label>
                 <input type="number" name="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price') }}" step="0.01" min="0" required>
                 @error('price')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Image</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
             </div>
             <div class="mb-3">
                 <label class="form-label">Sort order</label>

@@ -6,7 +6,7 @@
 <h1 class="mb-4">Edit Menu Item</h1>
 <div class="card">
     <div class="card-body">
-        <form action="{{ route('admin.items.update', $item) }}" method="POST">
+        <form action="{{ route('admin.items.update', $item) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="mb-3">
@@ -31,6 +31,13 @@
                 <label class="form-label">Price *</label>
                 <input type="number" name="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price', $item->price) }}" step="0.01" min="0" required>
                 @error('price')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Image</label>
+                @if($item->image)
+                    <div class="mb-2"><img src="{{ asset('storage/' . $item->image) }}" alt="" style="max-height:80px;border-radius:8px;"></div>
+                @endif
+                <input type="file" name="image" class="form-control" accept="image/*">
             </div>
             <div class="mb-3">
                 <label class="form-label">Sort order</label>

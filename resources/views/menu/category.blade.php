@@ -4,46 +4,34 @@
 
 @section('content')
 <div class="container">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb breadcrumb-glass">
             <li class="breadcrumb-item"><a href="{{ route('menu.index') }}">Menu</a></li>
             <li class="breadcrumb-item active">{{ $category->name }}</li>
         </ol>
     </nav>
-    <h1 class="mb-4">{{ $category->name }}</h1>
+
+    <h1 class="page-heading mb-2">{{ $category->name }}</h1>
     @if($category->description)
-        <p class="text-muted">{{ $category->description }}</p>
+        <p class="text-white-50 mb-4">{{ $category->description }}</p>
     @endif
 
-    <div class="row g-3">
+    <div class="row g-3 g-md-4">
         @forelse($category->activeItems as $item)
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100">
-                    <div class="card-body d-flex flex-column">
-                        <h6 class="card-title">{{ $item->name }}</h6>
-                        @if($item->description)
-                            <p class="card-text small text-muted flex-grow-1">{{ $item->description }}</p>
-                        @endif
-                        <div class="d-flex justify-content-between align-items-center mt-auto">
-                            <span class="fw-bold text-primary">${{ number_format($item->price, 2) }}</span>
-                            <form action="{{ route('cart.add', $item) }}" method="POST" class="d-inline">
-                                @csrf
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <x-food-card :item="$item" />
             </div>
         @empty
             <div class="col-12">
-                <p class="text-muted">No items in this category right now.</p>
+                <x-glass-card>
+                    <p class="text-white-50 mb-0">No items in this category right now.</p>
+                </x-glass-card>
             </div>
         @endforelse
     </div>
 
     <div class="mt-4">
-        <a href="{{ route('menu.index') }}" class="btn btn-outline-secondary">View full menu</a>
+        <a href="{{ route('menu.index') }}" class="btn btn-outline-glass">View full menu</a>
     </div>
 </div>
 @endsection

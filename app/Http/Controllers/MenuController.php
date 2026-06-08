@@ -24,4 +24,18 @@ class MenuController extends Controller
         $categories = Category::where('is_active', true)->orderBy('sort_order')->get();
         return view('menu.category', compact('category', 'categories'));
     }
+
+    public function show(string $slug)
+    {
+        $item = Item::where('slug', $slug)->with('category')->firstOrFail();
+
+        $related = Item::where('category_id', $item->category_id)
+            ->where('id', '!=', $item->id)
+            ->where('is_available', true)
+            ->orderBy('sort_order')
+            ->limit(4)
+            ->get();
+
+        return view('menu.show', compact('item', 'related'));
+    }
 }

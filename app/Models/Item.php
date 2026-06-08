@@ -36,4 +36,15 @@ class Item extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    public function imageUrl(): string
+    {
+        if ($this->image) {
+            return str_starts_with($this->image, 'http')
+                ? $this->image
+                : asset('storage/' . $this->image);
+        }
+
+        return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500&auto=format&fit=crop';
+    }
 }
