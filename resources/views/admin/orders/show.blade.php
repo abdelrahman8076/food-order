@@ -27,7 +27,7 @@
         <div class="admin-card card mb-4">
             <div class="card-header">Items</div>
             <div class="card-body p-0">
-                <table class="table table-sm mb-0 admin-table">
+                <table class="table table-sm table-hover mb-0 admin-table">
                     <thead><tr><th>Item</th><th>Qty</th><th>Notes</th><th>Price</th><th>Total</th></tr></thead>
                     <tbody>
                         @foreach($order->orderItems as $oi)

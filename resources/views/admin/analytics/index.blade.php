@@ -103,7 +103,7 @@
                 <div class="card-header">Top Customers</div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-sm admin-table mb-0">
+                        <table class="table table-sm table-hover admin-table mb-0">
                             <thead>
                                 <tr>
                                     <th>Customer</th>
@@ -134,7 +134,7 @@
                 <div class="card-header">Coupon Performance</div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-sm admin-table mb-0">
+                        <table class="table table-sm table-hover admin-table mb-0">
                             <thead>
                                 <tr>
                                     <th>Code</th>

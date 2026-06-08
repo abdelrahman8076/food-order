@@ -197,15 +197,16 @@ body.layout-admin {
             border: 1px solid var(--admin-border);
         }
 
-        .table {
+        body.layout-admin .table {
             margin-bottom: 0;
             --bs-table-bg: var(--admin-card);
             --bs-table-color: #f3f4f6;
-            --bs-table-hover-bg: rgba(255, 255, 255, 0.03);
+            --bs-table-hover-bg: var(--admin-card-hover);
+            --bs-table-hover-color: #f3f4f6;
             --bs-table-border-color: var(--admin-border);
         }
 
-        .table th {
+        body.layout-admin .table th {
             background: rgba(255, 255, 255, 0.02);
             text-transform: uppercase;
             font-size: 0.75rem;
@@ -215,9 +216,20 @@ body.layout-admin {
             padding: 1rem 1.25rem;
         }
 
-        .table td {
+        body.layout-admin .table td {
             padding: 1rem 1.25rem;
             vertical-align: middle;
+        }
+
+        body.layout-admin .table-hover > tbody > tr {
+            transition: background-color 0.15s ease;
+        }
+
+        body.layout-admin .table-hover > tbody > tr:hover > * {
+            --bs-table-bg-state: var(--admin-card-hover);
+            background-color: var(--admin-card-hover) !important;
+            color: #f3f4f6;
+            box-shadow: none;
         }
 
         /* --- Premium UI Utility Components --- */
