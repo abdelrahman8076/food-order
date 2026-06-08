@@ -89,21 +89,17 @@
 
                         <td>
                             @if($item->is_available)
-                                <span class="glowing-state-dot-badge d-inline-flex align-items-center gap-1.5 py-1 px-2.5 rounded text-success bg-success bg-opacity-10 border border-success border-opacity-20 fs-xs fw-semibold uppercase tracking-wider">
-                                    <span class="dot-indicator bg-success animate-pulse-soft"></span> Active
-                                </span>
+                                <x-admin.status-pill variant="success" :dot="true">Active</x-admin.status-pill>
                             @else
-                                <span class="glowing-state-dot-badge d-inline-flex align-items-center gap-1.5 py-1 px-2.5 rounded text-muted bg-white bg-opacity-5 border border-white border-opacity-10 fs-xs fw-semibold uppercase tracking-wider">
-                                    <span class="dot-indicator bg-secondary"></span> Muted
-                                </span>
+                                <x-admin.status-pill variant="muted">Muted</x-admin.status-pill>
                             @endif
                         </td>
 
                         <td>
                             @if($item->is_featured)
-                                <span class="glowing-state-dot-badge d-inline-flex align-items-center gap-1.5 py-1 px-2.5 rounded text-warning bg-warning bg-opacity-10 border border-warning border-opacity-20 fs-xs fw-semibold uppercase tracking-wider">
-                                    <i class="bi bi-star-fill text-warning fs-xs"></i> Pinned
-                                </span>
+                                <x-admin.status-pill variant="featured">
+                                    <i class="bi bi-star-fill fs-xs"></i> Pinned
+                                </x-admin.status-pill>
                             @else
                                 <span class="text-white-50 opacity-25 px-2">—</span>
                             @endif
@@ -142,68 +138,4 @@
 <div class="mt-4 custom-pagination-wrapper">
     {{ $items->withQueryString()->links() }}
 </div>
-
-@push('styles')
-<style>
-    /* Utility Constants Definitions Helper Rules mapping */
-    .rgba-header-tint { background: rgba(255,255,255,0.01) !important; border-bottom: 1px solid var(--admin-border) !important; }
-    .fs-xs { font-size: 0.725rem !important; }
-    .gap-1\.5 { gap: 0.4rem !important; }
-    .uppercase { text-transform: uppercase; }
-    .tracking-wider { letter-spacing: 0.5px; }
-    .max-w-xs { max-width: 320px; }
-    .text-white-70 { color: rgba(255,255,255,0.7) !important; }
-
-    /* Core Media Avatar Thumbnail Framework settings formatting rules */
-    .avatar-thumbnail-frame {
-        width: 44px;
-        height: 44px;
-    }
-
-    /* Status Pill Base Grid Components Formatting layout */
-    .glowing-state-dot-badge {
-        font-size: 0.7rem;
-    }
-    .dot-indicator {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-    .animate-pulse-soft {
-        animation: active-pulse-glowing 2s infinite ease-in-out;
-    }
-    @keyframes active-pulse-glowing {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.4; transform: scale(1.15); }
-    }
-
-    /* Isolated Control Icon Buttons Architecture rules styling mapping */
-    .btn-icon-action {
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.06);
-        color: var(--admin-text-muted);
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .btn-edit-tint:hover {
-        background: rgba(var(--admin-orange-rgb), 0.12);
-        border-color: var(--admin-orange);
-        color: var(--admin-orange);
-    }
-    .btn-delete-tint:hover {
-        background: rgba(220, 53, 69, 0.15);
-        border-color: #dc3545;
-        color: #e34c56;
-    }
-    .text-hover-orange:hover { color: var(--admin-orange) !important; }
-    .truncate-container { max-width: 280px; }
-</style>
-@endpush
 @endsection

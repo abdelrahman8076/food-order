@@ -14,14 +14,14 @@
 
     @forelse($orders as $order)
         @php
-            // Match status codes cleanly to semantic style sets matching tracking portal design
-            $statusStyles = match($order->status) {
-                'pending' => ['bg' => 'rgba(255, 193, 7, 0.12)', 'color' => '#ffc107', 'border' => 'rgba(255,193,7,0.2)'],
-                'processing', 'preparing' => ['bg' => 'rgba(13, 202, 240, 0.12)', 'color' => '#0dcaf0', 'border' => 'rgba(13,202,240,0.2)'],
-                'delivered' => ['bg' => 'rgba(25, 135, 84, 0.12)', 'color' => '#198754', 'border' => 'rgba(25,135,84,0.2)'],
-                'cancelled' => ['bg' => 'rgba(220, 53, 69, 0.12)', 'color' => '#dc3545', 'border' => 'rgba(220,53,69,0.2)'],
-                default => ['bg' => 'rgba(255, 127, 80, 0.12)', 'color' => 'var(--primary-orange)', 'border' => 'rgba(255,127,80,0.2)']
+            $statusVariant = match($order->status) {
+                'pending' => 'warning',
+                'delivered' => 'success',
+                'cancelled' => 'danger',
+                'processing', 'preparing', 'confirmed', 'ready', 'out_for_delivery' => 'info',
+                default => 'primary',
             };
+            $statusLabel = \App\Services\OrderService::STATUSES[$order->status] ?? ucfirst($order->status);
         @endphp
 
         <x-glass-card class="mb-3 order-history-card position-relative overflow-hidden">
@@ -54,10 +54,7 @@
                 <!-- Financial Data Actions Stack -->
                 <div class="col-md-3 text-md-end d-flex flex-row flex-md-column justify-content-between align-items-center gap-2">
                     <div class="d-flex align-items-center gap-3 flex-row-reverse flex-md-row">
-                        <span class="badge dynamic-status-badge px-3 py-2 border"
-                              style="background-color: {{ $statusStyles['bg'] }}; color: {{ $statusStyles['color'] }}; border-color: {{ $statusStyles['border'] }} !important;">
-                            {{ ucfirst($order->status) }}
-                        </span>
+                        <x-public.status-pill :variant="$statusVariant">{{ $statusLabel }}</x-public.status-pill>
                         <div class="text-white font-serif fw-bold fs-5">${{ number_format($order->total, 2) }}</div>
                     </div>
                     
@@ -157,14 +154,6 @@
         box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
     }
 
-    /* Dynamic Badges Structural Settings rules */
-    .dynamic-status-badge {
-        font-size: 0.725rem;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        border-radius: 8px;
-    }
     .border-dashed { border-style: dashed !important; }
 
     /* Custom App Pagination elements override styling mapping */

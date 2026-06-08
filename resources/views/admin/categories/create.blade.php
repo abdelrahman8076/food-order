@@ -25,7 +25,7 @@
                 <input type="checkbox" name="is_active" class="form-check-input" id="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
                 <label class="form-check-label" for="is_active">Active</label>
             </div>
-            <button type="submit" class="btn btn-primary">Create Category</button>
+            <button type="submit" class="btn btn-admin-primary">Create Category</button>
             <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-secondary">Cancel</a>
         </form>
     </div>

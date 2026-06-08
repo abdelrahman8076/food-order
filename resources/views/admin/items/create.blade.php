@@ -47,7 +47,7 @@
                 <input type="checkbox" name="is_featured" class="form-check-input" id="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}>
                 <label class="form-check-label" for="is_featured">Featured</label>
             </div>
-            <button type="submit" class="btn btn-primary">Create Item</button>
+            <button type="submit" class="btn btn-admin-primary">Create Item</button>
             <a href="{{ route('admin.items.index') }}" class="btn btn-outline-secondary">Cancel</a>
         </form>
     </div>

@@ -232,6 +232,152 @@
             font-size: 0.75rem;
         }
 
+        /* --- Shared utilities --- */
+        .fs-xs { font-size: 0.725rem !important; }
+        .uppercase { text-transform: uppercase; }
+        .tracking-wider { letter-spacing: 0.5px; }
+        .max-w-xs { max-width: 320px; }
+        .text-accent-yellow { color: var(--admin-yellow) !important; }
+        .style-filter-bg { background: rgba(255, 255, 255, 0.01) !important; }
+        .rgba-header-tint { background: rgba(255, 255, 255, 0.01) !important; border-bottom: 1px solid var(--admin-border) !important; }
+        .truncate-container { max-width: 280px; }
+        .hover-orange:hover,
+        .text-hover-orange:hover { color: var(--admin-orange) !important; }
+
+        /* --- Icon action buttons --- */
+        .btn.btn-icon-action {
+            --bs-btn-bg: rgba(255, 255, 255, 0.06);
+            --bs-btn-border-color: rgba(255, 255, 255, 0.12);
+            --bs-btn-color: rgba(255, 255, 255, 0.8);
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: var(--transition-smooth);
+        }
+
+        .btn.btn-icon-action.btn-edit-tint {
+            color: var(--admin-orange) !important;
+            border-color: rgba(var(--admin-orange-rgb), 0.35) !important;
+            background: rgba(var(--admin-orange-rgb), 0.1) !important;
+        }
+
+        .btn.btn-icon-action.btn-edit-tint:hover {
+            background: rgba(var(--admin-orange-rgb), 0.18) !important;
+            border-color: var(--admin-orange) !important;
+            color: #fff !important;
+        }
+
+        .btn.btn-icon-action.btn-view-tint {
+            color: var(--admin-yellow) !important;
+            border-color: rgba(255, 190, 118, 0.35) !important;
+            background: rgba(255, 190, 118, 0.1) !important;
+        }
+
+        .btn.btn-icon-action.btn-view-tint:hover {
+            background: rgba(255, 190, 118, 0.18) !important;
+            border-color: var(--admin-yellow) !important;
+            color: #fff !important;
+        }
+
+        .btn.btn-icon-action.btn-delete-tint {
+            color: #ff6b81 !important;
+            border-color: rgba(255, 107, 129, 0.35) !important;
+            background: rgba(255, 107, 129, 0.1) !important;
+        }
+
+        .btn.btn-icon-action.btn-delete-tint:hover {
+            background: rgba(255, 107, 129, 0.2) !important;
+            border-color: #ff6b81 !important;
+            color: #fff !important;
+        }
+
+        /* --- Unified status pills --- */
+        .admin-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+        }
+
+        .admin-status-pill--success {
+            color: #2ed573;
+            background: rgba(46, 213, 115, 0.12);
+            border-color: rgba(46, 213, 115, 0.3);
+        }
+
+        .admin-status-pill--warning {
+            color: #ffbe76;
+            background: rgba(255, 190, 118, 0.12);
+            border-color: rgba(255, 190, 118, 0.3);
+        }
+
+        .admin-status-pill--danger {
+            color: #ff6b81;
+            background: rgba(255, 107, 129, 0.12);
+            border-color: rgba(255, 107, 129, 0.3);
+        }
+
+        .admin-status-pill--info {
+            color: #6eb5ff;
+            background: rgba(110, 181, 255, 0.12);
+            border-color: rgba(110, 181, 255, 0.3);
+        }
+
+        .admin-status-pill--muted {
+            color: rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-status-pill--featured {
+            color: #ffbe76;
+            background: rgba(255, 190, 118, 0.12);
+            border-color: rgba(255, 190, 118, 0.3);
+        }
+
+        .admin-status-pill__dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: admin-pill-pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes admin-pill-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.15); }
+        }
+
+        .live-dot-pulse {
+            width: 7px;
+            height: 7px;
+            background-color: #2ed573;
+            border-radius: 50%;
+            display: inline-block;
+            animation: live-indicator-glow 1.8s infinite ease-in-out;
+        }
+
+        @keyframes live-indicator-glow {
+            0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.4); }
+            50% { opacity: 0.5; transform: scale(1.1); box-shadow: 0 0 0 4px rgba(46, 213, 115, 0); }
+        }
+
+        .avatar-thumbnail-frame {
+            width: 44px;
+            height: 44px;
+        }
+
         /* --- Interactive Status Badge Notification Elements --- */
         #pendingOrdersBadge {
             background: var(--admin-orange) !important;
@@ -267,7 +413,107 @@
         }
         .system-toast-alert.alert-success { border-left-color: #2ed573; }
         .system-toast-alert.alert-danger { border-left-color: #ff4757; }
+
+        /* --- Dark theme contrast fixes (Bootstrap overrides) --- */
+        .card, .admin-card {
+            --bs-card-color: #f3f4f6;
+            color: #f3f4f6;
+        }
+
+        .card-body .fw-bold,
+        .card-body .fs-3,
+        .card-body .fs-4,
+        .card-body .display-6,
+        .card-title {
+            color: #f3f4f6;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: #fff;
+        }
+
+        .table-light,
+        thead.table-light th {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: var(--admin-text-muted) !important;
+            border-color: var(--admin-border) !important;
+        }
+
+        .badge.bg-white,
+        .badge.bg-white.bg-opacity-5 {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .badge.bg-warning {
+            color: #1a1a1a !important;
+        }
+
+        .badge.bg-secondary,
+        .badge.bg-success {
+            color: #fff !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--admin-orange);
+            border-color: var(--admin-orange);
+        }
+
+        .btn-outline-primary:hover {
+            background: rgba(var(--admin-orange-rgb), 0.12);
+            color: #fff;
+            border-color: var(--admin-orange);
+        }
+
+        .btn-primary {
+            background: var(--admin-orange);
+            border-color: var(--admin-orange);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #ff654a;
+            border-color: #ff654a;
+            color: #fff;
+        }
+
+        .btn-outline-secondary {
+            color: rgba(255, 255, 255, 0.8);
+            border-color: var(--admin-border);
+        }
+
+        .btn-outline-secondary:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .text-white-70 {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        .text-accent-orange {
+            color: var(--admin-orange) !important;
+        }
+
+        .btn-outline-danger {
+            color: #ff6b81;
+            border-color: rgba(255, 107, 129, 0.45);
+        }
+
+        .btn-outline-danger:hover {
+            background: rgba(255, 107, 129, 0.15);
+            border-color: #ff6b81;
+            color: #fff;
+        }
+
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.12);
+            color: #fff;
+            border-color: rgba(255, 193, 7, 0.3);
+        }
     </style>
+    @stack('styles')
 </head>
 <body>
 

@@ -14,9 +14,9 @@
         </nav>
         <div class="d-flex align-items-center gap-2">
             <h1 class="h3 m-0 fw-bold text-white">Live Kitchen Board</h1>
-            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 d-flex align-items-center gap-1.5 py-1 px-2 rounded fs-xs fw-semibold tracking-wider text-uppercase">
+            <x-admin.status-pill variant="success" class="gap-1">
                 <span class="live-dot-pulse"></span> Streaming Live
-            </span>
+            </x-admin.status-pill>
         </div>
     </div>
 </div>
@@ -131,17 +131,14 @@
                             @php
                                 $statusRaw = strtolower($order->status);
                                 $statusLabel = \App\Services\OrderService::STATUSES[$order->status] ?? ucfirst($order->status);
-                                
-                                $statusClasses = match($statusRaw) {
-                                    'pending' => 'text-warning bg-warning bg-opacity-10 border-warning border-opacity-20',
-                                    'completed', 'delivered' => 'text-success bg-success bg-opacity-10 border-success border-opacity-20',
-                                    'cancelled', 'failed' => 'text-danger bg-danger bg-opacity-10 border-danger border-opacity-20',
-                                    default => 'text-info bg-info bg-opacity-10 border-info border-opacity-20',
+                                $statusVariant = match($statusRaw) {
+                                    'pending' => 'warning',
+                                    'completed', 'delivered' => 'success',
+                                    'cancelled', 'failed' => 'danger',
+                                    default => 'info',
                                 };
                             @endphp
-                            <span class="badge border py-1.5 px-2.5 rounded-2 fs-xs font-sans text-uppercase tracking-wider fw-semibold {{ $statusClasses }}">
-                                {{ $statusLabel }}
-                            </span>
+                            <x-admin.status-pill :variant="$statusVariant">{{ $statusLabel }}</x-admin.status-pill>
                         </td>
 
                         <!-- Financial Line Cost Fields -->
@@ -180,52 +177,4 @@
 <div class="mt-4 custom-pagination-wrapper">
     {{ $orders->withQueryString()->links() }}
 </div>
-
-@push('styles')
-<style>
-    /* Styling Helpers Context Architecture Mapping Rules */
-    .style-filter-bg { background: rgba(255,255,255,0.01) !important; }
-    .text-accent-yellow { color: var(--admin-yellow) !important; }
-    .text-accent-orange { color: var(--admin-orange) !important; }
-    .fs-xs { font-size: 0.725rem !important; }
-    .gap-1\.5 { gap: 0.4rem !important; }
-    .max-w-xs { max-width: 320px; }
-    .truncate-container { max-width: 240px; }
-    .hover-orange:hover { color: var(--admin-orange) !important; }
-
-    /* Live Sync Streaming Pulse Animations Core Rules config */
-    .live-dot-pulse {
-        width: 7px;
-        height: 7px;
-        background-color: #2ed573;
-        border-radius: 50%;
-        display: inline-block;
-        animation: live-indicator-glow 1.8s infinite ease-in-out;
-    }
-    @keyframes live-indicator-glow {
-        0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.4); }
-        50% { opacity: 0.5; transform: scale(1.1); box-shadow: 0 0 0 4px rgba(46, 213, 115, 0); }
-    }
-
-    /* Isolated Icon Actions Operations formatting grid configurations */
-    .btn-icon-action {
-        width: 34px;
-        height: 34px;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        background: rgba(255,255,255,0.02);
-        border: 1px solid rgba(255,255,255,0.06);
-        color: var(--admin-text-muted);
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .btn-view-tint:hover {
-        background: rgba(var(--admin-orange-rgb), 0.12);
-        border-color: var(--admin-orange);
-        color: var(--admin-orange);
-    }
-</style>
-@endpush
 @endsection

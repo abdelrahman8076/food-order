@@ -5,12 +5,12 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">Categories</h1>
-    <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">Add Category</a>
+    <a href="{{ route('admin.categories.create') }}" class="btn btn-admin-primary">Add Category</a>
 </div>
 <div class="card">
     <div class="card-body p-0">
         <table class="table table-hover mb-0">
-            <thead class="table-light">
+            <thead>
                 <tr>
                     <th>Name</th>
                     <th>Slug</th>
@@ -27,9 +27,15 @@
                         <td>{{ $cat->slug }}</td>
                         <td>{{ $cat->items_count }}</td>
                         <td>{{ $cat->sort_order }}</td>
-                        <td>{{ $cat->is_active ? 'Yes' : 'No' }}</td>
                         <td>
-                            <a href="{{ route('admin.categories.edit', $cat) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            @if($cat->is_active)
+                                <x-admin.status-pill variant="success" :dot="true">Active</x-admin.status-pill>
+                            @else
+                                <x-admin.status-pill variant="muted">Inactive</x-admin.status-pill>
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('admin.categories.edit', $cat) }}" class="btn btn-sm btn-admin-outline">Edit</a>
                             <form action="{{ route('admin.categories.destroy', $cat) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this category?');">
                                 @csrf
                                 @method('DELETE')

@@ -72,13 +72,12 @@
                         $isSelected = $initialExpandedId === $listedOrder->id;
                         $isInProgress = !in_array($listedOrder->status, ['delivered', 'cancelled']);
                         
-                        // Map status codes cleanly to semantic style sets
-                        $statusStyles = match($listedOrder->status) {
-                            'pending' => ['bg' => 'rgba(255, 193, 7, 0.15)', 'color' => '#ffc107', 'border' => 'rgba(255,193,7,0.3)'],
-                            'processing', 'preparing' => ['bg' => 'rgba(13, 202, 240, 0.15)', 'color' => '#0dcaf0', 'border' => 'rgba(13,202,240,0.3)'],
-                            'delivered' => ['bg' => 'rgba(25, 135, 84, 0.15)', 'color' => '#198754', 'border' => 'rgba(25,135,84,0.3)'],
-                            'cancelled' => ['bg' => 'rgba(220, 53, 69, 0.15)', 'color' => '#dc3545', 'border' => 'rgba(220,53,69,0.3)'],
-                            default => ['bg' => 'rgba(255, 127, 80, 0.15)', 'color' => 'var(--primary-orange)', 'border' => 'rgba(255,127,80,0.3)']
+                        $statusVariant = match($listedOrder->status) {
+                            'pending' => 'warning',
+                            'delivered' => 'success',
+                            'cancelled' => 'danger',
+                            'processing', 'preparing', 'confirmed', 'ready', 'out_for_delivery' => 'info',
+                            default => 'primary',
                         };
                     @endphp
                     
@@ -113,11 +112,12 @@
                                 </div>
                                 <div class="col-sm-6 text-sm-end d-flex justify-content-between justify-content-sm-end align-items-center gap-3">
                                     <div class="order-financial-meta">
-                                        <span class="badge dynamic-status-badge px-3 py-2 border mb-1 d-inline-block"
-                                              id="statusBadge-{{ $listedOrder->id }}"
-                                              style="background-color: {{ $statusStyles['bg'] }}; color: {{ $statusStyles['color'] }}; border-color: {{ $statusStyles['border'] }} !important;">
+                                        <x-public.status-pill
+                                            :variant="$statusVariant"
+                                            class="mb-1"
+                                            id="statusBadge-{{ $listedOrder->id }}">
                                             {{ \App\Services\OrderService::STATUSES[$listedOrder->status] ?? ucfirst($listedOrder->status) }}
-                                        </span>
+                                        </x-public.status-pill>
                                         <div class="text-white font-serif small fw-bold">${{ number_format($listedOrder->total, 2) }}</div>
                                     </div>
                                     <div class="chevron-wrapper bg-white bg-opacity-5 rounded-circle p-2">
@@ -331,12 +331,6 @@
         color: #ea868f;
         border-radius: 12px;
         padding: 1rem;
-    }
-    .dynamic-status-badge {
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
     }
     .border-dashed { border-style: dashed !important; }
 </style>

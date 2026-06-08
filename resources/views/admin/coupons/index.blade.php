@@ -37,7 +37,13 @@
                             @endif
                         </td>
                         <td>{{ $coupon->expires_at ? $coupon->expires_at->format('M d, Y') : '—' }}</td>
-                        <td>{{ $coupon->is_active ? 'Yes' : 'No' }}</td>
+                        <td>
+                            @if($coupon->is_active)
+                                <x-admin.status-pill variant="success" :dot="true">Active</x-admin.status-pill>
+                            @else
+                                <x-admin.status-pill variant="muted">Inactive</x-admin.status-pill>
+                            @endif
+                        </td>
                         <td class="text-end">
                             <a href="{{ route('admin.coupons.edit', $coupon) }}" class="btn btn-sm btn-admin-outline">Edit</a>
                             <form action="{{ route('admin.coupons.destroy', $coupon) }}" method="POST" class="d-inline"

@@ -65,7 +65,7 @@
             <div class="admin-card card h-100">
                 <div class="card-body">
                     <div class="small text-muted">Orders</div>
-                    <div class="fs-3 fw-bold">{{ number_format($summary['orders']) }}</div>
+                    <div class="fs-3 fw-bold text-white">{{ number_format($summary['orders']) }}</div>
                 </div>
             </div>
         </div>
@@ -73,7 +73,7 @@
             <div class="admin-card card h-100">
                 <div class="card-body">
                     <div class="small text-muted">Avg Order Value</div>
-                    <div class="fs-3 fw-bold">${{ number_format($summary['avg_order_value'], 2) }}</div>
+                    <div class="fs-3 fw-bold text-white">${{ number_format($summary['avg_order_value'], 2) }}</div>
                 </div>
             </div>
         </div>
@@ -81,7 +81,7 @@
             <div class="admin-card card h-100">
                 <div class="card-body">
                     <div class="small text-muted">Unique Customers</div>
-                    <div class="fs-3 fw-bold">{{ number_format($summary['customers']) }}</div>
+                    <div class="fs-3 fw-bold text-white">{{ number_format($summary['customers']) }}</div>
                 </div>
             </div>
         </div>
@@ -89,7 +89,7 @@
             <div class="admin-card card h-100">
                 <div class="card-body">
                     <div class="small text-muted">Items Sold</div>
-                    <div class="fs-3 fw-bold">{{ number_format($summary['items_sold']) }}</div>
+                    <div class="fs-3 fw-bold text-white">{{ number_format($summary['items_sold']) }}</div>
                 </div>
             </div>
         </div>

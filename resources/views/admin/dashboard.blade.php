@@ -22,7 +22,7 @@
         <div class="admin-card card h-100">
             <div class="card-body">
                 <div class="small text-muted">Orders</div>
-                <div class="fs-4 fw-bold">{{ number_format($monthSummary['orders']) }}</div>
+                <div class="fs-4 fw-bold text-white">{{ number_format($monthSummary['orders']) }}</div>
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
         <div class="admin-card card h-100">
             <div class="card-body">
                 <div class="small text-muted">Unique Customers</div>
-                <div class="fs-4 fw-bold">{{ number_format($monthSummary['customers']) }}</div>
+                <div class="fs-4 fw-bold text-white">{{ number_format($monthSummary['customers']) }}</div>
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
             <div class="card-body">
                 <div class="small text-muted">Top Item</div>
                 @if($monthSummary['top_item_name'])
-                    <div class="fw-bold">{{ $monthSummary['top_item_name'] }}</div>
+                    <div class="fw-bold text-white">{{ $monthSummary['top_item_name'] }}</div>
                     <div class="small text-muted">{{ number_format($monthSummary['top_item_quantity']) }} sold</div>
                 @else
                     <div class="text-muted">—</div>
@@ -52,18 +52,18 @@
 <h5 class="mb-3">Operations</h5>
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card bg-primary text-white">
+        <div class="admin-card card h-100 border-start border-4 border-primary">
             <div class="card-body">
-                <h5 class="card-title">Orders Today</h5>
-                <p class="display-6 mb-0">{{ $todayOrders }}</p>
+                <h5 class="card-title text-muted">Orders Today</h5>
+                <p class="display-6 mb-0 text-white">{{ $todayOrders }}</p>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card bg-warning text-dark">
+        <div class="admin-card card h-100 border-start border-4 border-warning">
             <div class="card-body">
-                <h5 class="card-title">Pending Orders</h5>
-                <p class="display-6 mb-0">{{ $pendingOrders }}</p>
+                <h5 class="card-title text-muted">Pending Orders</h5>
+                <p class="display-6 mb-0 text-white">{{ $pendingOrders }}</p>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="table-light">
+                <thead>
                     <tr>
                         <th>Order #</th>
                         <th>Customer</th>
@@ -91,10 +91,21 @@
                             <td>{{ $order->order_number }}</td>
                             <td>{{ $order->customer_name }}</td>
                             <td>{{ ucfirst($order->order_type) }}</td>
-                            <td><span class="badge bg-{{ $order->status === 'pending' ? 'warning' : ($order->status === 'delivered' ? 'success' : 'secondary') }}">{{ ucfirst($order->status) }}</span></td>
+                            <td>
+                                @php
+                                    $statusVariant = match($order->status) {
+                                        'pending' => 'warning',
+                                        'delivered', 'completed' => 'success',
+                                        'cancelled', 'failed' => 'danger',
+                                        default => 'info',
+                                    };
+                                    $statusLabel = \App\Services\OrderService::STATUSES[$order->status] ?? ucfirst($order->status);
+                                @endphp
+                                <x-admin.status-pill :variant="$statusVariant">{{ $statusLabel }}</x-admin.status-pill>
+                            </td>
                             <td>${{ number_format($order->total, 2) }}</td>
                             <td>{{ $order->created_at->format('M d, H:i') }}</td>
-                            <td><a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-outline-primary">View</a></td>
+                            <td><a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-admin-outline">View</a></td>
                         </tr>
                     @empty
                         <tr><td colspan="7" class="text-muted">No orders yet.</td></tr>

@@ -121,13 +121,7 @@
 
 @push('styles')
 <style>
-    /* Global Helper Component Styles rules overrides mapping */
-    .style-header-border { border-color: rgba(255,255,255,0.06) !important; }
-    .text-accent-orange { color: var(--admin-orange) !important; }
-    .text-accent-yellow { color: var(--admin-yellow) !important; }
-    .uppercase { text-transform: uppercase; }
-    .tracking-wider { letter-spacing: 0.6px; }
-    .fs-xs { font-size: 0.725rem !important; }
+    .style-header-border { border-color: rgba(255, 255, 255, 0.06) !important; }
     .mt-1\.5 { margin-top: 0.4rem !important; }
 </style>
 @endpush

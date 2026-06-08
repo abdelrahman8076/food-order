@@ -53,9 +53,9 @@
 
 /* Custom Modernized Menu Pills */
 .btn-menu-pill {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--glass-border);
-    color: rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
     border-radius: 50px;
     font-size: 0.85rem;
     font-weight: 600;

@@ -336,6 +336,77 @@
         }
 
         main { padding: 20px 0 60px; }
+
+        /* --- Dark theme contrast fixes (Bootstrap overrides) --- */
+        .btn-menu-pill {
+            --bs-btn-bg: rgba(255, 255, 255, 0.06);
+            --bs-btn-color: rgba(255, 255, 255, 0.85);
+            --bs-btn-border-color: var(--glass-border);
+            background: rgba(255, 255, 255, 0.06) !important;
+            color: rgba(255, 255, 255, 0.85) !important;
+            border-color: var(--glass-border) !important;
+        }
+
+        .badge.bg-white,
+        .badge.bg-white.bg-opacity-5,
+        .bg-white.bg-opacity-5.text-white-70,
+        .item-tag-pill {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .text-white-70 {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        .food-card,
+        .glass-card {
+            --bs-card-color: #fff;
+            color: #fff;
+        }
+
+        /* --- Unified public status pills --- */
+        .public-status-pill {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+        }
+
+        .public-status-pill--success {
+            color: #2ed573;
+            background: rgba(46, 213, 115, 0.12);
+            border-color: rgba(46, 213, 115, 0.3);
+        }
+
+        .public-status-pill--warning {
+            color: #ffbe76;
+            background: rgba(255, 190, 118, 0.12);
+            border-color: rgba(255, 190, 118, 0.3);
+        }
+
+        .public-status-pill--danger {
+            color: #ff6b81;
+            background: rgba(255, 107, 129, 0.12);
+            border-color: rgba(255, 107, 129, 0.3);
+        }
+
+        .public-status-pill--info {
+            color: #6eb5ff;
+            background: rgba(110, 181, 255, 0.12);
+            border-color: rgba(110, 181, 255, 0.3);
+        }
+
+        .public-status-pill--primary {
+            color: var(--primary-orange);
+            background: rgba(255, 126, 103, 0.12);
+            border-color: rgba(255, 126, 103, 0.3);
+        }
     </style>
     @stack('styles')
 </head>

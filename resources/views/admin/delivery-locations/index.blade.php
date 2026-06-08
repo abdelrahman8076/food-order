@@ -187,19 +187,7 @@
 
 @push('styles')
 <style>
-    /* Framework Structural Helpers mappings */
-    .style-header-border { border-color: rgba(255,255,255,0.06) !important; }
-    .text-accent-orange { color: var(--admin-orange) !important; }
-    .text-accent-yellow { color: var(--admin-yellow) !important; }
-    .uppercase { text-transform: uppercase; }
-    .tracking-wider { letter-spacing: 0.6px; }
-    .fs-xs { font-size: 0.725rem !important; }
-    .gap-2\.5 { gap: 0.6rem !important; }
-    .italicized { font-style: italic; }
-    .max-w-xs { max-width: 320px; }
-    .text-white-85 { color: rgba(255,255,255,0.85); }
-
-    /* Interactive Group Containers Framework layout configuration elements */
+    .style-header-border { border-color: rgba(255, 255, 255, 0.06) !important; }
     .city-group-container {
         background: rgba(255, 255, 255, 0.015);
         border: 1px solid rgba(255, 255, 255, 0.04);
@@ -208,27 +196,7 @@
         background: rgba(255, 255, 255, 0.025);
         border-color: rgba(255, 255, 255, 0.08);
     }
-
-    /* Target Icon Button Controllers Core styling schema definitions */
-    .btn-icon-action {
-        width: 31px;
-        height: 31px;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 6px;
-        background: rgba(255,255,255,0.02);
-        border: 1px solid rgba(255,255,255,0.05);
-        color: var(--admin-text-muted);
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .btn-delete-tint:hover {
-        background: rgba(220, 53, 69, 0.15);
-        border-color: #dc3545;
-        color: #e34c56;
-    }
-
+    .text-white-85 { color: rgba(255, 255, 255, 0.85); }
     @media (max-width: 575.98px) {
         .w-100-mobile { width: 100% !important; justify-content: space-between !important; }
     }
