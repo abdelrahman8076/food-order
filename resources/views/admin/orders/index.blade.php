@@ -3,63 +3,229 @@
 @section('title', 'Orders')
 
 @section('content')
-<h1 class="mb-4">Kitchen Board</h1>
+<!-- Page Header and Live Indicator -->
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Admin</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Orders Platform</li>
+            </ol>
+        </nav>
+        <div class="d-flex align-items-center gap-2">
+            <h1 class="h3 m-0 fw-bold text-white">Live Kitchen Board</h1>
+            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 d-flex align-items-center gap-1.5 py-1 px-2 rounded fs-xs fw-semibold tracking-wider text-uppercase">
+                <span class="live-dot-pulse"></span> Streaming Live
+            </span>
+        </div>
+    </div>
+</div>
 
+<!-- Section A: Live Real-Time Production Columns -->
 <div class="row g-3 mb-5" id="kitchenBoardColumns">
     @include('admin.orders._kitchen-board-columns')
 </div>
 
 @include('admin.orders._kitchen-board-poll')
 
-<h2 class="h5 mb-3">All Orders</h2>
-<form class="row g-2 mb-3">
-    <div class="col-auto">
-        <input type="text" name="order_number" class="form-control form-control-sm" placeholder="Order number" value="{{ request('order_number') }}">
-    </div>
-    <div class="col-auto">
-        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-            <option value="">All statuses</option>
-            @foreach(array_merge(\App\Services\OrderService::STATUSES, ['cancelled' => 'Cancelled']) as $key => $label)
-                <option value="{{ $key }}" {{ request('status') === $key ? 'selected' : '' }}>{{ $label }}</option>
-            @endforeach
-        </select>
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-sm btn-admin-primary">Filter</button>
-    </div>
-</form>
+<hr class="border-secondary border-opacity-10 my-5">
 
+<!-- Section B: Historical Log / Advanced Audit Ledger -->
+<div class="d-flex align-items-center gap-2 mb-3">
+    <i class="bi bi-clock-history text-muted fs-5"></i>
+    <h2 class="h5 m-0 fw-bold text-white">All Master Orders</h2>
+</div>
+
+<!-- Integrated Control Bar Block Component -->
+<div class="card mb-4 border-0">
+    <div class="card-body p-3 style-filter-bg">
+        <form action="{{ url()->current() }}" method="GET" class="m-0">
+            <div class="row g-2 align-items-center">
+                
+                <!-- Order Number Input Tag Search -->
+                <div class="col-12 col-sm-4 col-md-3">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white bg-opacity-5 text-muted border-secondary border-opacity-25"><i class="bi bi-search"></i></span>
+                        <input type="text" name="order_number" class="form-control form-control-sm" placeholder="Search order number..." value="{{ request('order_number') }}">
+                    </div>
+                </div>
+
+                <!-- Status Context Selector -->
+                <div class="col-12 col-sm-4 col-md-3">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white bg-opacity-5 text-muted border-secondary border-opacity-25"><i class="bi bi-funnel"></i></span>
+                        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="">All Fulfillment Statuses</option>
+                            @foreach(array_merge(\App\Services\OrderService::STATUSES, ['cancelled' => 'Cancelled']) as $key => $label)
+                                <option value="{{ $key }}" {{ request('status') === $key ? 'selected' : '' }}>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Control Submit Modifiers Trigger Actions -->
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-sm btn-admin-primary px-3">Apply Filter</button>
+                    @if(request()->has('order_number') || request()->has('status'))
+                        <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-admin-outline px-2 ms-1" title="Clear configuration filters">
+                            <i class="bi bi-x-circle"></i>
+                        </a>
+                    @endif
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Master Order Log Grid Card Layout Architecture -->
 <div class="admin-card">
     <div class="table-responsive">
-        <table class="table table-hover mb-0 admin-table">
+        <table class="table table-hover align-middle mb-0 admin-table">
             <thead>
                 <tr>
-                    <th>Order #</th>
-                    <th>Customer</th>
-                    <th>Phone</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Total</th>
-                    <th>Date</th>
-                    <th></th>
+                    <th style="width: 12%;">Order ID</th>
+                    <th style="width: 25%;">Customer Details</th>
+                    <th style="width: 13%;">Distribution Type</th>
+                    <th style="width: 15%;">Fulfillment Status</th>
+                    <th style="width: 12%;">Financial Total</th>
+                    <th style="width: 15%;">Submission Date</th>
+                    <th style="width: 8%;" class="text-end">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($orders as $order)
+                @forelse($orders as $order)
                     <tr>
-                        <td>{{ $order->order_number }}</td>
-                        <td>{{ $order->customer_name }}</td>
-                        <td>{{ $order->customer_phone }}</td>
-                        <td>{{ ucfirst($order->order_type) }}</td>
-                        <td><span class="badge admin-badge">{{ \App\Services\OrderService::STATUSES[$order->status] ?? ucfirst($order->status) }}</span></td>
-                        <td>${{ number_format($order->total, 2) }}</td>
-                        <td>{{ $order->created_at->format('M d, H:i') }}</td>
-                        <td><a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-admin-outline">View</a></td>
+                        <!-- Order Identification Token -->
+                        <td>
+                            <span class="text-accent-yellow font-monospace fw-bold">
+                                #{{ $order->order_number }}
+                            </span>
+                        </td>
+
+                        <!-- Detailed Stacked Customer Metadata Field -->
+                        <td>
+                            <div class="truncate-container">
+                                <h6 class="text-white fw-semibold mb-0 text-truncate">{{ $order->customer_name }}</h6>
+                                <a href="tel:{{ $order->customer_phone }}" class="text-muted small text-decoration-none hover-orange d-inline-flex align-items-center gap-1">
+                                    <i class="bi bi-telephone text-opacity-50 fs-xs"></i>{{ $order->customer_phone }}
+                                </a>
+                            </div>
+                        </td>
+
+                        <!-- Distribution Channel Indicators -->
+                        <td>
+                            @if(strtolower($order->order_type) === 'delivery')
+                                <span class="text-info small fw-medium d-inline-flex align-items-center gap-1">
+                                    <i class="bi bi-truck"></i> Delivery
+                                </span>
+                            @else
+                                <span class="text-accent-orange small fw-medium d-inline-flex align-items-center gap-1">
+                                    <i class="bi bi-bag-heart"></i> Takeout
+                                </span>
+                            @endif
+                        </td>
+
+                        <!-- Configured Semantic Status Badge Mapping Switch Context -->
+                        <td>
+                            @php
+                                $statusRaw = strtolower($order->status);
+                                $statusLabel = \App\Services\OrderService::STATUSES[$order->status] ?? ucfirst($order->status);
+                                
+                                $statusClasses = match($statusRaw) {
+                                    'pending' => 'text-warning bg-warning bg-opacity-10 border-warning border-opacity-20',
+                                    'completed', 'delivered' => 'text-success bg-success bg-opacity-10 border-success border-opacity-20',
+                                    'cancelled', 'failed' => 'text-danger bg-danger bg-opacity-10 border-danger border-opacity-20',
+                                    default => 'text-info bg-info bg-opacity-10 border-info border-opacity-20',
+                                };
+                            @endphp
+                            <span class="badge border py-1.5 px-2.5 rounded-2 fs-xs font-sans text-uppercase tracking-wider fw-semibold {{ $statusClasses }}">
+                                {{ $statusLabel }}
+                            </span>
+                        </td>
+
+                        <!-- Financial Line Cost Fields -->
+                        <td>
+                            <span class="text-white fw-bold">${{ number_format($order->total, 2) }}</span>
+                        </td>
+
+                        <!-- System Timestamps Formatted Strings -->
+                        <td>
+                            <div class="small text-white-50">{{ $order->created_at->format('M d, Y') }}</div>
+                            <div class="text-muted fs-xs" style="margin-top: -2px;">{{ $order->created_at->format('H:i') }} hrs</div>
+                        </td>
+
+                        <!-- Action Controls Row Grid Block Linking -->
+                        <td class="text-end">
+                            <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-icon-action btn-view-tint" title="Inspect complete order logs">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted display-5 mb-2"><i class="bi bi-clipboard-x opacity-25"></i></div>
+                            <h6 class="text-white fw-semibold">No Orders Registered</h6>
+                            <p class="text-muted small max-w-xs mx-auto mb-0">No entries currently match that specific tracking signature parameters layout.</p>
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
 </div>
-<div class="mt-3">{{ $orders->withQueryString()->links() }}</div>
+
+<!-- System Navigation Row Pagination Selector wrapper block -->
+<div class="mt-4 custom-pagination-wrapper">
+    {{ $orders->withQueryString()->links() }}
+</div>
+
+@push('styles')
+<style>
+    /* Styling Helpers Context Architecture Mapping Rules */
+    .style-filter-bg { background: rgba(255,255,255,0.01) !important; }
+    .text-accent-yellow { color: var(--admin-yellow) !important; }
+    .text-accent-orange { color: var(--admin-orange) !important; }
+    .fs-xs { font-size: 0.725rem !important; }
+    .gap-1\.5 { gap: 0.4rem !important; }
+    .max-w-xs { max-width: 320px; }
+    .truncate-container { max-width: 240px; }
+    .hover-orange:hover { color: var(--admin-orange) !important; }
+
+    /* Live Sync Streaming Pulse Animations Core Rules config */
+    .live-dot-pulse {
+        width: 7px;
+        height: 7px;
+        background-color: #2ed573;
+        border-radius: 50%;
+        display: inline-block;
+        animation: live-indicator-glow 1.8s infinite ease-in-out;
+    }
+    @keyframes live-indicator-glow {
+        0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.4); }
+        50% { opacity: 0.5; transform: scale(1.1); box-shadow: 0 0 0 4px rgba(46, 213, 115, 0); }
+    }
+
+    /* Isolated Icon Actions Operations formatting grid configurations */
+    .btn-icon-action {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        color: var(--admin-text-muted);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-view-tint:hover {
+        background: rgba(var(--admin-orange-rgb), 0.12);
+        border-color: var(--admin-orange);
+        color: var(--admin-orange);
+    }
+</style>
+@endpush
 @endsection
