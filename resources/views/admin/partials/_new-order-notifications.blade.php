@@ -7,29 +7,6 @@
 </div>
 
 <div class="toast-container position-fixed top-0 end-0 p-3" id="newOrderToastContainer" style="z-index: 1080;"></div>
-
-<style>
-    .new-order-toast {
-        background: var(--admin-card);
-        border: 1px solid var(--admin-orange);
-        color: #fff;
-        min-width: 300px;
-    }
-    .new-order-toast .toast-header {
-        background: rgba(255, 126, 103, 0.15);
-        border-bottom: 1px solid var(--admin-border);
-        color: #fff;
-    }
-    .new-order-toast .btn-close {
-        filter: invert(1);
-    }
-    #pendingOrdersBadge {
-        background: var(--admin-orange);
-        font-size: 0.65rem;
-        vertical-align: top;
-    }
-</style>
-
 <script>
 (function() {
     const notifyUrl = @json(route('admin.orders.notifications'));

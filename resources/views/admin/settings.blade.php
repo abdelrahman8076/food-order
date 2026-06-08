@@ -118,11 +118,4 @@
 
     </div>
 </form>
-
-@push('styles')
-<style>
-    .style-header-border { border-color: rgba(255, 255, 255, 0.06) !important; }
-    .mt-1\.5 { margin-top: 0.4rem !important; }
-</style>
-@endpush
 @endsection

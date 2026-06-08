@@ -26,12 +26,3 @@
         @endif
     </div>
 </div>
-
-@once
-@push('styles')
-<style>
-    .food-card-link { display: block; color: inherit; cursor: pointer; }
-    .food-card-link:hover .food-title { color: var(--primary-orange); }
-</style>
-@endpush
-@endonce

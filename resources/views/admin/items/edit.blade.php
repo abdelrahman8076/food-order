@@ -164,7 +164,4 @@
 </form>
 
 <!-- Overlay Interactive Style Hint Tweaks -->
-<style>
-    .hover-overlay:hover { opacity: 1 !important; }
-</style>
 @endsection

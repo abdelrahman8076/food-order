@@ -184,22 +184,4 @@
         </div>
     </div>
 </div>
-
-@push('styles')
-<style>
-    .style-header-border { border-color: rgba(255, 255, 255, 0.06) !important; }
-    .city-group-container {
-        background: rgba(255, 255, 255, 0.015);
-        border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-    .city-group-container:hover {
-        background: rgba(255, 255, 255, 0.025);
-        border-color: rgba(255, 255, 255, 0.08);
-    }
-    .text-white-85 { color: rgba(255, 255, 255, 0.85); }
-    @media (max-width: 575.98px) {
-        .w-100-mobile { width: 100% !important; justify-content: space-between !important; }
-    }
-</style>
-@endpush
 @endsection
