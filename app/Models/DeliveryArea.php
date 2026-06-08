@@ -11,10 +11,12 @@ class DeliveryArea extends Model
         'city_id',
         'name',
         'is_active',
+        'delivery_fee',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'delivery_fee' => 'decimal:2',
     ];
 
     public function city(): BelongsTo

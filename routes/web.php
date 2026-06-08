@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\DeliveryLocationController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\AnalyticsController;
 use Illuminate\Support\Facades\Route;
 
 // Public
@@ -46,10 +47,13 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Admin dashboard
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('items', ItemController::class)->except(['show']);
     Route::resource('coupons', CouponController::class)->except(['show']);
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/notifications', [OrderController::class, 'notifications'])->name('orders.notifications');
     Route::get('orders/board', [OrderController::class, 'board'])->name('orders.board');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
@@ -60,5 +64,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('delivery-locations/cities', [DeliveryLocationController::class, 'storeCity'])->name('delivery-locations.cities.store');
     Route::delete('delivery-locations/cities/{city}', [DeliveryLocationController::class, 'destroyCity'])->name('delivery-locations.cities.destroy');
     Route::post('delivery-locations/areas', [DeliveryLocationController::class, 'storeArea'])->name('delivery-locations.areas.store');
+    Route::patch('delivery-locations/areas/{area}', [DeliveryLocationController::class, 'updateArea'])->name('delivery-locations.areas.update');
     Route::delete('delivery-locations/areas/{area}', [DeliveryLocationController::class, 'destroyArea'])->name('delivery-locations.areas.destroy');
+    Route::patch('orders/{order}/delivery-fee', [OrderController::class, 'updateDeliveryFee'])->name('orders.delivery-fee');
 });

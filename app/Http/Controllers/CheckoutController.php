@@ -15,6 +15,19 @@ use InvalidArgumentException;
 
 class CheckoutController extends Controller
 {
+    private const CHECKOUT_FORM_KEYS = [
+        'customer_name',
+        'customer_phone',
+        'customer_email',
+        'city_id',
+        'area_id',
+        'delivery_street',
+        'delivery_building',
+        'delivery_floor',
+        'delivery_apartment',
+        'notes',
+    ];
+
     public function __construct(
         private OrderService $orderService,
         private CouponService $couponService,
@@ -32,19 +45,42 @@ class CheckoutController extends Controller
         $settings = StoreSetting::current();
         $appliedCoupon = $this->resolveAppliedCoupon($built['subtotal']);
         $discount = $appliedCoupon ? $appliedCoupon->calculateDiscount($built['subtotal']) : 0;
-        $pricing = $this->orderService->calculatePricing($built['subtotal'], 'delivery', $discount);
+
+        $areaDeliveryFee = null;
+        $hasSelectedArea = false;
+        if ($oldAreaId = old('area_id', session('checkout_form.area_id'))) {
+            $area = DeliveryArea::active()->find($oldAreaId);
+            if ($area) {
+                $areaDeliveryFee = (float) $area->delivery_fee;
+                $hasSelectedArea = true;
+            }
+        }
+
+        $pricing = $this->orderService->calculatePricing($built['subtotal'], 'delivery', $discount, $areaDeliveryFee);
+        $deliveryFee = $hasSelectedArea ? $pricing['deliveryFee'] : 0;
+        $total = $pricing['discountedSubtotal'] + $pricing['tax'] + $deliveryFee;
         $cities = City::active()->with('activeAreas')->orderBy('name')->get();
+        $areasByCity = $cities->mapWithKeys(fn ($city) => [
+            $city->id => $city->activeAreas->map(fn ($area) => [
+                'id' => $area->id,
+                'name' => $area->name,
+                'delivery_fee' => (float) $area->delivery_fee,
+            ])->values(),
+        ]);
 
         return view('checkout.index', [
             'items' => $built['items'],
             'subtotal' => $built['subtotal'],
             'tax' => $pricing['tax'],
-            'deliveryFee' => $pricing['deliveryFee'],
+            'deliveryFee' => $deliveryFee,
             'discount' => $pricing['discount'],
-            'total' => $pricing['total'],
+            'total' => $total,
             'settings' => $settings,
             'cities' => $cities,
+            'areasByCity' => $areasByCity,
+            'freeDeliveryNote' => 'Delivery fee for orders under $' . number_format($settings->free_delivery_min, 2) . '.',
             'appliedCoupon' => $appliedCoupon,
+            'checkoutForm' => session('checkout_form', []),
         ]);
     }
 
@@ -63,25 +99,25 @@ class CheckoutController extends Controller
         $coupon = $this->couponService->findByCode($request->input('code'));
 
         if (!$coupon) {
-            return back()->with('error', 'Invalid coupon code.');
+            return $this->flashCheckoutForm($request)->with('error', 'Invalid coupon code.');
         }
 
         try {
             $this->couponService->apply($coupon, $built['subtotal']);
         } catch (InvalidArgumentException $e) {
-            return back()->with('error', $e->getMessage());
+            return $this->flashCheckoutForm($request)->with('error', $e->getMessage());
         }
 
         session()->put('checkout_coupon_id', $coupon->id);
 
-        return back()->with('success', 'Coupon ' . $coupon->code . ' applied.');
+        return $this->flashCheckoutForm($request)->with('success', 'Coupon ' . $coupon->code . ' applied.');
     }
 
-    public function removeCoupon()
+    public function removeCoupon(Request $request)
     {
         session()->forget('checkout_coupon_id');
 
-        return back()->with('success', 'Coupon removed.');
+        return $this->flashCheckoutForm($request)->with('success', 'Coupon removed.');
     }
 
     public function store(Request $request)
@@ -138,6 +174,14 @@ class CheckoutController extends Controller
             'order' => $order->id,
             'token' => $order->tracking_token,
         ])->with('success', 'Order placed! Your order number is ' . $order->order_number);
+    }
+
+    private function flashCheckoutForm(Request $request)
+    {
+        $input = $request->only(self::CHECKOUT_FORM_KEYS);
+        session()->put('checkout_form', $input);
+
+        return back()->withInput($input);
     }
 
     private function resolveAppliedCoupon(float $subtotal): ?Coupon

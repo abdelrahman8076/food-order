@@ -31,6 +31,48 @@
         }
         .navbar-admin .nav-link { color: rgba(255,255,255,0.7) !important; }
         .navbar-admin .nav-link:hover { color: var(--admin-orange) !important; }
+        .navbar-admin .nav-item form { margin: 0; display: flex; align-items: center; }
+        .navbar-admin .btn-link.nav-link {
+            color: rgba(255,255,255,0.7) !important;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            line-height: var(--bs-nav-link-line-height);
+        }
+        .navbar-admin .btn-link.nav-link:hover { color: var(--admin-orange) !important; }
+        .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: #fff;
+            --bs-table-hover-bg: rgba(255,255,255,0.06);
+            --bs-table-hover-color: #fff;
+            --bs-table-border-color: var(--admin-border);
+        }
+        .table-light {
+            --bs-table-bg: rgba(255,255,255,0.05);
+            --bs-table-color: #fff;
+        }
+        .card {
+            background: var(--admin-card);
+            border-color: var(--admin-border);
+            color: #fff;
+        }
+        .card .card-header, .card .card-footer {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--admin-border);
+            color: #fff;
+        }
+        .pagination {
+            --bs-pagination-bg: var(--admin-card);
+            --bs-pagination-border-color: var(--admin-border);
+            --bs-pagination-color: rgba(255,255,255,0.8);
+            --bs-pagination-hover-bg: rgba(255,255,255,0.1);
+            --bs-pagination-hover-color: var(--admin-orange);
+            --bs-pagination-active-bg: var(--admin-orange);
+            --bs-pagination-active-border-color: var(--admin-orange);
+            --bs-pagination-disabled-color: rgba(255,255,255,0.35);
+        }
+        .text-muted { color: rgba(255,255,255,0.5) !important; }
+        .breadcrumb { --bs-breadcrumb-divider-color: rgba(255,255,255,0.4); }
+        .form-control::placeholder { color: rgba(255,255,255,0.45); }
         .admin-card, .card.admin-card {
             background: var(--admin-card);
             border: 1px solid var(--admin-border);
@@ -86,6 +128,15 @@
             border-color: var(--admin-border);
             color: #fff;
         }
+        .form-control, .form-select, select {
+            color-scheme: dark;
+        }
+        .form-select option,
+        .form-control option,
+        select option {
+            background-color: var(--admin-card);
+            color: #fff;
+        }
         .form-control:focus, .form-select:focus {
             background: rgba(255,255,255,0.12);
             border-color: var(--admin-orange);
@@ -106,19 +157,25 @@
             <div class="collapse navbar-collapse" id="adminNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.orders.index') }}">Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.analytics.index') }}">Analytics</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.orders.index') }}">
+                            Orders
+                            <span id="pendingOrdersBadge" class="badge rounded-pill ms-1 d-none">0</span>
+                        </a>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.items.index') }}">Items</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.coupons.index') }}">Coupons</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.categories.index') }}">Categories</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.delivery-locations.index') }}">Locations</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.settings') }}">Settings</a></li>
                 </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">View Site</a></li>
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                <ul class="navbar-nav d-flex align-items-center">
+                    <li class="nav-item d-flex align-items-center"><a class="nav-link" href="{{ route('home') }}">View Site</a></li>
+                    <li class="nav-item d-flex align-items-center">
+                        <form action="{{ route('logout') }}" method="POST" class="m-0">
                             @csrf
-                            <button type="submit" class="btn btn-link nav-link p-0 border-0">Logout</button>
+                            <button type="submit" class="btn btn-link nav-link border-0">Logout</button>
                         </form>
                     </li>
                 </ul>
@@ -144,6 +201,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @include('admin.partials._new-order-notifications')
     @stack('scripts')
 </body>
 </html>

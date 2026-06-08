@@ -91,6 +91,15 @@
 
         .glass-input::placeholder { color: rgba(255, 255, 255, 0.4); }
 
+        .glass-input, select.glass-input {
+            color-scheme: dark;
+        }
+        .glass-input option,
+        select.glass-input option {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
         .btn-primary-orange {
             background: var(--primary-orange);
             border: none;

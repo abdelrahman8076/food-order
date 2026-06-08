@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Coupon;
+use App\Models\DeliveryArea;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -63,18 +64,33 @@ class OrderService
         return compact('items', 'subtotal');
     }
 
-    public function calculatePricing(float $subtotal, string $orderType, float $discount = 0): array
-    {
+    public function calculatePricing(
+        float $subtotal,
+        string $orderType,
+        float $discount = 0,
+        ?float $areaDeliveryFee = null,
+    ): array {
         $settings = StoreSetting::current();
         $discount = min($discount, $subtotal);
         $discountedSubtotal = max(0, $subtotal - $discount);
         $tax = round($discountedSubtotal * (float) $settings->tax_rate, 2);
-        $deliveryFee = $orderType === 'delivery' && $subtotal < (float) $settings->free_delivery_min
-            ? (float) $settings->delivery_fee
-            : 0;
+
+        if ($orderType === 'delivery' && $subtotal < (float) $settings->free_delivery_min) {
+            $deliveryFee = $areaDeliveryFee ?? (float) $settings->delivery_fee;
+        } else {
+            $deliveryFee = 0;
+        }
+
         $total = $discountedSubtotal + $tax + $deliveryFee;
 
         return compact('tax', 'deliveryFee', 'total', 'discount', 'discountedSubtotal');
+    }
+
+    public function recalculateOrderTotal(Order $order): void
+    {
+        $discountedSubtotal = max(0, (float) $order->subtotal - (float) $order->discount);
+        $order->total = round($discountedSubtotal + (float) $order->tax + (float) $order->delivery_fee, 2);
+        $order->save();
     }
 
     public function createOrder(array $cart, array $customerData): Order
@@ -97,7 +113,16 @@ class OrderService
             $discount = $applied['discount'];
         }
 
-        $pricing = $this->calculatePricing($built['subtotal'], $orderType, $discount);
+        $areaDeliveryFee = null;
+        if (!empty($customerData['area_id'])) {
+            $area = DeliveryArea::active()->find($customerData['area_id']);
+            if (!$area) {
+                throw new InvalidArgumentException('Please select a valid delivery area.');
+            }
+            $areaDeliveryFee = (float) $area->delivery_fee;
+        }
+
+        $pricing = $this->calculatePricing($built['subtotal'], $orderType, $discount, $areaDeliveryFee);
         $deliveryAddress = $this->buildDeliveryAddressSnapshot($customerData);
 
         return DB::transaction(function () use ($cart, $customerData, $built, $pricing, $orderType, $deliveryAddress, $coupon, $discount) {

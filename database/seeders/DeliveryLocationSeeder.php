@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\City;
 use App\Models\DeliveryArea;
+use App\Models\StoreSetting;
 use Illuminate\Database\Seeder;
 
 class DeliveryLocationSeeder extends Seeder
@@ -15,10 +16,12 @@ class DeliveryLocationSeeder extends Seeder
             ['is_active' => true]
         );
 
+        $defaultFee = (float) StoreSetting::current()->delivery_fee;
+
         foreach (['Nasr City', 'Sheraton'] as $areaName) {
             DeliveryArea::firstOrCreate(
                 ['city_id' => $cairo->id, 'name' => $areaName],
-                ['is_active' => true]
+                ['is_active' => true, 'delivery_fee' => $defaultFee]
             );
         }
     }

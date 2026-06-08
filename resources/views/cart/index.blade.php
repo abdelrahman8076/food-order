@@ -153,7 +153,7 @@
                 </div>
                 @if($deliveryFee > 0)
                     <p class="small text-white-50 mb-2">
-                        Delivery fee applies to orders under ${{ number_format($settings->free_delivery_min, 2) }}.
+                        Delivery fee depends on your area for orders under ${{ number_format($settings->free_delivery_min, 2) }}.
                     </p>
                 @else
                     <p class="small text-white-50 mb-2">Free delivery — your order qualifies.</p>

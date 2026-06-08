@@ -81,7 +81,7 @@
                         </button>
                     </form>
                 @endif
-                <form action="{{ route('admin.orders.status', $order) }}" method="POST">
+                <form action="{{ route('admin.orders.status', $order) }}" method="POST" class="mb-3">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label">Set Status</label>
@@ -93,9 +93,44 @@
                     </div>
                     <button type="submit" class="btn btn-admin-outline w-100">Update Status</button>
                 </form>
+                <form action="{{ route('admin.orders.delivery-fee', $order) }}" method="POST" id="deliveryFeeForm">
+                    @csrf
+                    @method('PATCH')
+                    <div class="mb-2">
+                        <label class="form-label" for="delivery_fee">Delivery Fee ($)</label>
+                        <input type="number" name="delivery_fee" id="delivery_fee" class="form-control"
+                               value="{{ number_format($order->delivery_fee, 2, '.', '') }}" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" class="form-check-input" id="free_delivery">
+                        <label class="form-check-label" for="free_delivery">Free delivery</label>
+                    </div>
+                    <button type="submit" class="btn btn-admin-outline w-100">Save Delivery Fee</button>
+                </form>
                 <p class="small text-muted mt-2 mb-0">Placed: {{ $order->created_at->format('M d, Y H:i') }}</p>
             </div>
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+(function() {
+    const freeCheckbox = document.getElementById('free_delivery');
+    const feeInput = document.getElementById('delivery_fee');
+    if (!freeCheckbox || !feeInput) return;
+
+    freeCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            feeInput.value = '0.00';
+        }
+    });
+
+    feeInput.addEventListener('input', function() {
+        freeCheckbox.checked = parseFloat(this.value) === 0;
+    });
+
+    freeCheckbox.checked = parseFloat(feeInput.value) === 0;
+})();
+</script>
+@endpush
 @endsection

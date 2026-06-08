@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\City;
 use App\Models\DeliveryArea;
+use App\Models\StoreSetting;
 use Illuminate\Http\Request;
 
 class DeliveryLocationController extends Controller
@@ -12,8 +13,9 @@ class DeliveryLocationController extends Controller
     public function index()
     {
         $cities = City::with('deliveryAreas')->orderBy('name')->get();
+        $defaultDeliveryFee = StoreSetting::current()->delivery_fee;
 
-        return view('admin.delivery-locations.index', compact('cities'));
+        return view('admin.delivery-locations.index', compact('cities', 'defaultDeliveryFee'));
     }
 
     public function storeCity(Request $request)
@@ -46,6 +48,7 @@ class DeliveryLocationController extends Controller
         $validated = $request->validate([
             'city_id' => 'required|exists:cities,id',
             'name' => 'required|string|max:255',
+            'delivery_fee' => 'required|numeric|min:0',
         ]);
 
         $exists = DeliveryArea::where('city_id', $validated['city_id'])
@@ -60,9 +63,21 @@ class DeliveryLocationController extends Controller
             'city_id' => $validated['city_id'],
             'name' => $validated['name'],
             'is_active' => true,
+            'delivery_fee' => $validated['delivery_fee'],
         ]);
 
         return back()->with('success', 'Area added.');
+    }
+
+    public function updateArea(Request $request, DeliveryArea $area)
+    {
+        $validated = $request->validate([
+            'delivery_fee' => 'required|numeric|min:0',
+        ]);
+
+        $area->update($validated);
+
+        return back()->with('success', 'Delivery fee updated for ' . $area->name . '.');
     }
 
     public function destroyArea(DeliveryArea $area)

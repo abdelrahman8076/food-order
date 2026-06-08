@@ -31,8 +31,9 @@
                     <input type="number" name="tax_rate" class="form-control" value="{{ old('tax_rate', $settings->tax_rate) }}" step="0.01" min="0" max="1" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Delivery Fee ($)</label>
+                    <label class="form-label">Default delivery fee (for new areas) ($)</label>
                     <input type="number" name="delivery_fee" class="form-control" value="{{ old('delivery_fee', $settings->delivery_fee) }}" step="0.01" min="0" required>
+                    <div class="form-text">Used when adding new delivery areas. Per-area fees are set under Delivery Locations.</div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Free Delivery Minimum ($)</label>

@@ -41,6 +41,11 @@
                         <label class="form-label">Area name</label>
                         <input type="text" name="name" class="form-control" placeholder="e.g. Nasr City" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Delivery Fee ($)</label>
+                        <input type="number" name="delivery_fee" class="form-control" value="{{ old('delivery_fee', $defaultDeliveryFee) }}" step="0.01" min="0" required>
+                        <div class="form-text">Set to $0 for always-free delivery in this area.</div>
+                    </div>
                     <button type="submit" class="btn btn-admin-primary w-100">Add Area</button>
                 </form>
             </div>
@@ -68,15 +73,27 @@
                         @else
                             <ul class="list-group list-group-flush">
                                 @foreach($city->deliveryAreas as $area)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0"
+                                    <li class="list-group-item px-0"
                                         style="background: transparent; border-color: var(--admin-border); color: #fff;">
-                                        <span>{{ $area->name }}</span>
-                                        <form action="{{ route('admin.delivery-locations.areas.destroy', $area) }}" method="POST"
-                                              onsubmit="return confirm('Delete {{ $area->name }}?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                        </form>
+                                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                                            <span>{{ $area->name }}</span>
+                                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                                <form action="{{ route('admin.delivery-locations.areas.update', $area) }}" method="POST" class="d-flex align-items-center gap-2">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <label class="small text-muted mb-0">Fee ($)</label>
+                                                    <input type="number" name="delivery_fee" class="form-control form-control-sm" style="width: 6rem;"
+                                                           value="{{ number_format($area->delivery_fee, 2, '.', '') }}" step="0.01" min="0" required>
+                                                    <button type="submit" class="btn btn-sm btn-admin-outline">Save</button>
+                                                </form>
+                                                <form action="{{ route('admin.delivery-locations.areas.destroy', $area) }}" method="POST"
+                                                      onsubmit="return confirm('Delete {{ $area->name }}?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </li>
                                 @endforeach
                             </ul>

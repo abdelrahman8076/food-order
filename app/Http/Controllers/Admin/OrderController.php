@@ -41,6 +41,31 @@ class OrderController extends Controller
         ]);
     }
 
+    public function notifications(Request $request)
+    {
+        $sinceId = (int) $request->query('since_id', 0);
+
+        $newOrders = Order::query()
+            ->where('status', 'pending')
+            ->where('id', '>', $sinceId)
+            ->latest()
+            ->limit(5)
+            ->get()
+            ->map(fn (Order $order) => [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'customer_name' => $order->customer_name,
+                'total' => number_format($order->total, 2, '.', ''),
+                'url' => route('admin.orders.show', $order),
+            ]);
+
+        return response()->json([
+            'pending_count' => Order::where('status', 'pending')->count(),
+            'latest_id' => (int) (Order::max('id') ?? 0),
+            'new_orders' => $newOrders,
+        ]);
+    }
+
     private function boardOrders()
     {
         return Order::with('orderItems')
@@ -81,6 +106,18 @@ class OrderController extends Controller
         }
 
         return back()->with('success', 'Order advanced to next stage.');
+    }
+
+    public function updateDeliveryFee(Request $request, Order $order)
+    {
+        $validated = $request->validate([
+            'delivery_fee' => 'required|numeric|min:0',
+        ]);
+
+        $order->delivery_fee = $validated['delivery_fee'];
+        $this->orderService->recalculateOrderTotal($order);
+
+        return back()->with('success', 'Delivery fee updated.');
     }
 
     public function settings()
